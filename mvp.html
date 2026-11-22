@@ -1,0 +1,2440 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Іскра — Знайомства зі змістом</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            serif: ['Playfair Display', 'serif'],
+          },
+          colors: {
+            cream: {
+              50: '#FDFBF7',
+              100: '#F8F4EC',
+              200: '#EFE8DA',
+            },
+            coral: {
+              50: '#FFF3F0',
+              100: '#FFE3DC',
+              400: '#F27457',
+              500: '#E55A3C',
+              600: '#CC4326',
+            },
+            ink: {
+              900: '#1D1B18',
+              700: '#45403A',
+              500: '#787168',
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #F4EFE6;
+      color: #1D1B18;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Custom subtle scrollbar */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #DED6C8;
+      border-radius: 9999px;
+    }
+
+    /* Card Swipe & Entrance Animations */
+    @keyframes cardPopIn {
+      0% { opacity: 0; transform: scale(0.95) translateY(10px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .animate-card-in {
+      animation: cardPopIn 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes swipeLeftAnim {
+      to { opacity: 0; transform: translateX(-130%) rotate(-16deg); }
+    }
+    .swipe-left {
+      animation: swipeLeftAnim 0.35s ease-in forwards;
+      pointer-events: none;
+    }
+
+    @keyframes swipeRightAnim {
+      to { opacity: 0; transform: translateX(130%) rotate(16deg); }
+    }
+    .swipe-right {
+      animation: swipeRightAnim 0.35s ease-in forwards;
+      pointer-events: none;
+    }
+
+    @keyframes swipeSuperAnim {
+      to { opacity: 0; transform: translateY(-130%) scale(1.06); }
+    }
+    .swipe-super {
+      animation: swipeSuperAnim 0.38s ease-in forwards;
+      pointer-events: none;
+    }
+
+    @keyframes pulseSpark {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.12); }
+    }
+    .animate-spark {
+      animation: pulseSpark 1.8s infinite ease-in-out;
+    }
+
+    /* Typing indicator dots */
+    @keyframes typingBounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.45; }
+      30% { transform: translateY(-4px); opacity: 1; }
+    }
+    .typing-dot:nth-child(1) { animation: typingBounce 1.2s infinite 0s; }
+    .typing-dot:nth-child(2) { animation: typingBounce 1.2s infinite 0.2s; }
+    .typing-dot:nth-child(3) { animation: typingBounce 1.2s infinite 0.4s; }
+
+    /* Range slider styling */
+    input[type="range"] {
+      accent-color: #E55A3C;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center sm:p-4 md:p-6">
+
+  <!-- Main App Shell: Mobile-First Frame on Desktop, Fullscreen on Mobile -->
+  <div id="appShell" class="w-full max-w-[440px] h-[100dvh] sm:h-[840px] sm:max-h-[92vh] bg-cream-50 sm:rounded-[32px] sm:shadow-[0_24px_60px_-15px_rgba(29,27,24,0.16)] sm:border sm:border-cream-200 flex flex-col overflow-hidden relative">
+
+    <!-- Top Header -->
+    <header class="px-5 pt-4 pb-3 bg-cream-50/90 backdrop-blur-md border-b border-cream-200/70 flex items-center justify-between shrink-0 z-20">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-coral-400 to-coral-600 flex items-center justify-center text-white shadow-sm">
+          <!-- Spark SVG Icon -->
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C12.4 7.5 16.5 11.6 22 12C16.5 12.4 12.4 16.5 12 22C11.6 16.5 7.5 12.4 2 12C7.5 11.6 11.6 7.5 12 2Z" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="font-serif text-xl font-bold tracking-tight text-ink-900 leading-none">Іскра</h1>
+          <p id="headerSubtitle" class="text-[11px] text-ink-500 mt-0.5 font-medium">Знайомства зі змістом</p>
+        </div>
+      </div>
+
+      <!-- Header Right Action (Filter button on Discover tab) -->
+      <div id="headerActions" class="flex items-center gap-2">
+        <button id="openFilterBtn" onclick="openFilters()" class="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-cream-100 hover:bg-cream-200/80 text-ink-900 text-xs font-semibold transition active:scale-95" title="Фільтри пошуку">
+          <svg class="w-4 h-4 text-coral-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+          </svg>
+          <span>Фільтри</span>
+          <span id="activeFilterCount" class="hidden min-w-[18px] h-[18px] px-1 rounded-full bg-coral-500 text-white text-[10px] font-bold flex items-center justify-center">0</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Dynamic Viewport -->
+    <main class="flex-1 overflow-y-auto overflow-x-hidden relative">
+
+      <!-- ==================== TAB 1: ЗНАЙОМСТВА (DISCOVER) ==================== -->
+      <section id="tab-discover" class="h-full flex flex-col p-4 pb-3">
+        <!-- Card Stack Container -->
+        <div id="cardContainer" class="flex-1 relative flex flex-col min-h-0">
+          <!-- Rendered dynamically via JS -->
+        </div>
+
+        <!-- Action Controls Bar -->
+        <div id="discoverControls" class="pt-3 pb-1 flex items-center justify-center gap-3.5 shrink-0">
+          <!-- Rewind -->
+          <button id="btnRewind" onclick="rewindLast()" class="w-11 h-11 rounded-full bg-white border border-cream-200 text-amber-600 shadow-sm hover:bg-amber-50 flex items-center justify-center transition active:scale-90 disabled:opacity-40 disabled:pointer-events-none" title="Повернути попередню анкету">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+            </svg>
+          </button>
+
+          <!-- Pass -->
+          <button id="btnPass" onclick="handleSwipe('pass')" class="w-15 h-15 w-[60px] h-[60px] rounded-full bg-white border border-cream-200 text-ink-500 shadow-md hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50/50 flex items-center justify-center transition active:scale-90" title="Пропустити">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          <!-- Super Like -->
+          <button id="btnSuper" onclick="handleSwipe('super')" class="w-12 h-12 rounded-full bg-white border border-sky-200 text-sky-500 shadow-sm hover:bg-sky-50 flex items-center justify-center transition active:scale-90" title="Особлива симпатія">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+          </button>
+
+          <!-- Like -->
+          <button id="btnLike" onclick="handleSwipe('like')" class="w-[60px] h-[60px] rounded-full bg-gradient-to-br from-coral-400 to-coral-600 text-white shadow-lg shadow-coral-500/30 hover:brightness-105 flex items-center justify-center transition active:scale-90" title="Вподобати">
+            <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+            </svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- ==================== TAB 2: СИМПАТІЇ ТА ЧАТИ (MATCHES) ==================== -->
+      <section id="tab-matches" class="hidden h-full flex flex-col">
+        <!-- Matches List View -->
+        <div id="matchesListView" class="flex-1 overflow-y-auto p-5 space-y-6">
+          <!-- New Matches Horizontal Strip -->
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <h2 class="text-xs font-bold uppercase tracking-wider text-ink-500">Нові симпатії</h2>
+              <span id="matchesCountBadge" class="text-xs font-semibold text-coral-600 bg-coral-50 px-2.5 py-0.5 rounded-full">0</span>
+            </div>
+            <div id="newMatchesStrip" class="flex gap-3.5 overflow-x-auto pb-2">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Active Conversations -->
+          <div>
+            <h2 class="text-xs font-bold uppercase tracking-wider text-ink-500 mb-3">Повідомлення</h2>
+            <div id="conversationsList" class="space-y-2.5">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Chat Thread View (Hidden until a chat is opened) -->
+        <div id="chatThreadView" class="hidden h-full flex flex-col bg-cream-50">
+          <!-- Chat Sub-header -->
+          <div class="px-4 py-2.5 bg-white border-b border-cream-200 flex items-center justify-between shrink-0">
+            <div class="flex items-center gap-3">
+              <button onclick="closeChat()" class="p-2 -ml-1 rounded-xl hover:bg-cream-100 text-ink-700 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <div id="chatPartnerAvatar" class="w-10 h-10 rounded-full overflow-hidden shrink-0"></div>
+              <div>
+                <div class="flex items-center gap-1.5">
+                  <h3 id="chatPartnerName" class="font-bold text-sm text-ink-900">Ім'я</h3>
+                  <span class="w-2 h-2 rounded-full bg-emerald-500" title="Зараз онлайн"></span>
+                </div>
+                <p id="chatPartnerMeta" class="text-[11px] text-ink-500">Місто • мета</p>
+              </div>
+            </div>
+            <button onclick="openPartnerInfoModal()" class="p-2 rounded-xl hover:bg-cream-100 text-ink-500 hover:text-ink-900 transition" title="Переглянути анкету">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Messages Feed -->
+          <div id="chatMessagesContainer" class="flex-1 overflow-y-auto p-4 space-y-3">
+            <!-- Populated by JS -->
+          </div>
+
+          <!-- Suggested Icebreakers Bar -->
+          <div id="icebreakerSuggestions" class="px-3 py-2 bg-cream-100/80 border-t border-cream-200/70 overflow-x-auto flex gap-2 shrink-0">
+            <!-- Populated by JS -->
+          </div>
+
+          <!-- Message Input -->
+          <form onsubmit="sendChatMessage(event)" class="p-3 bg-white border-t border-cream-200 flex items-center gap-2 shrink-0">
+            <input id="chatInput" type="text" placeholder="Напишіть тепле повідомлення..." autocomplete="off" class="flex-1 bg-cream-100 text-ink-900 placeholder-ink-500 text-sm px-4 py-2.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-coral-400/50" />
+            <button type="submit" class="w-10 h-10 rounded-2xl bg-coral-500 hover:bg-coral-600 text-white flex items-center justify-center shrink-0 transition active:scale-95">
+              <svg class="w-5 h-5 translate-x-0.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+              </svg>
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- ==================== TAB 3: МІЙ ПРОФІЛЬ (MY PROFILE) ==================== -->
+      <section id="tab-profile" class="hidden h-full overflow-y-auto p-5 space-y-5">
+        <!-- Profile Top Card -->
+        <div class="bg-white rounded-3xl p-5 border border-cream-200 shadow-sm flex items-center gap-4">
+          <div id="myProfileAvatarPreview" class="w-20 h-20 rounded-2xl overflow-hidden shrink-0 shadow-inner"></div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-1.5">
+              <h2 id="profileHeaderName" class="font-bold text-lg text-ink-900 truncate">Олександр, 28</h2>
+              <svg class="w-4 h-4 text-sky-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <p id="profileHeaderSub" class="text-xs text-ink-500 mt-0.5">Київ • Продуктовий дизайнер</p>
+            <button onclick="openMyCardPreview()" class="mt-2.5 inline-flex items-center gap-1.5 text-xs font-semibold text-coral-600 bg-coral-50 hover:bg-coral-100 px-3 py-1.5 rounded-xl transition">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              Попередній перегляд анкети
+            </button>
+          </div>
+        </div>
+
+        <!-- Edit Form -->
+        <div class="bg-white rounded-3xl p-5 border border-cream-200 shadow-sm space-y-4">
+          <h3 class="font-bold text-sm text-ink-900">Редагування анкети</h3>
+
+          <div class="grid grid-cols-3 gap-3">
+            <div class="col-span-2">
+              <label class="block text-xs font-semibold text-ink-500 mb-1">Ім'я</label>
+              <input id="inputMyName" type="text" onchange="saveUserProfile()" class="w-full bg-cream-100 rounded-xl px-3.5 py-2.5 text-sm font-medium text-ink-900 focus:outline-none focus:ring-2 focus:ring-coral-400" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-ink-500 mb-1">Вік</label>
+              <input id="inputMyAge" type="number" min="18" max="80" onchange="saveUserProfile()" class="w-full bg-cream-100 rounded-xl px-3.5 py-2.5 text-sm font-medium text-ink-900 focus:outline-none focus:ring-2 focus:ring-coral-400" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-ink-500 mb-1">Місто</label>
+              <select id="inputMyCity" onchange="saveUserProfile()" class="w-full bg-cream-100 rounded-xl px-3 py-2.5 text-sm font-medium text-ink-900 focus:outline-none focus:ring-2 focus:ring-coral-400">
+                <option value="Київ">Київ</option>
+                <option value="Львів">Львів</option>
+                <option value="Одеса">Одеса</option>
+                <option value="Дніпро">Дніпро</option>
+                <option value="Харків">Харків</option>
+                <option value="Вінниця">Вінниця</option>
+                <option value="Івано-Франківськ">Івано-Франківськ</option>
+                <option value="Полтава">Полтава</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-ink-500 mb-1">Зріст (см)</label>
+              <input id="inputMyHeight" type="number" min="140" max="220" onchange="saveUserProfile()" class="w-full bg-cream-100 rounded-xl px-3.5 py-2.5 text-sm font-medium text-ink-900 focus:outline-none focus:ring-2 focus:ring-coral-400" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-ink-500 mb-1">Професія / справа</label>
+              <input id="inputMyJob" type="text" onchange="saveUserProfile()" class="w-full bg-cream-100 rounded-xl px-3.5 py-2.5 text-sm font-medium text-ink-900 focus:outline-none focus:ring-2 focus:ring-coral-400" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-ink-500 mb-1">Формат відносин</label>
+              <select id="inputMyGoal" onchange="saveUserProfile()" class="w-full bg-cream-100 rounded-xl px-3 py-2.5 text-sm font-medium text-ink-900 focus:outline-none focus:ring-2 focus:ring-coral-400">
+                <option value="Серйозні стосунки">Серйозні стосунки</option>
+                <option value="Сім'я та шлюб">Сім'я та шлюб</option>
+                <option value="Романтика і побачення">Романтика і побачення</option>
+                <option value="Дружба та спілкування">Дружба та спілкування</option>
+                <option value="Вільні стосунки">Вільні стосунки</option>
+                <option value="Ще визначаюсь">Ще визначаюсь</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-ink-500 mb-1.5">Оплата на першому побаченні</label>
+            <div id="myFirstDatePaymentPills" class="grid grid-cols-3 gap-2">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Classic Dating Profile Attributes -->
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-ink-500 mb-1">Наявність дітей</label>
+              <select id="inputMyChildrenHave" onchange="saveUserProfile()" class="w-full bg-cream-100 rounded-xl px-3 py-2.5 text-xs font-medium text-ink-900 focus:outline-none focus:ring-2 focus:ring-coral-400">
+                <option value="Немає дітей">Немає дітей</option>
+                <option value="Є діти (живуть разом)">Є діти (живуть разом)</option>
+                <option value="Є діти (живуть окремо)">Є діти (живуть окремо)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-ink-500 mb-1">Діти у майбутньому</label>
+              <select id="inputMyChildrenWant" onchange="saveUserProfile()" class="w-full bg-cream-100 rounded-xl px-3 py-2.5 text-xs font-medium text-ink-900 focus:outline-none focus:ring-2 focus:ring-coral-400">
+                <option value="Хочу дітей">Хочу дітей</option>
+                <option value="Не планую дітей">Не планую дітей</option>
+                <option value="Відкритий(а) до обговорення">Відкритий(а) до обговорення</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-ink-500 mb-1">Сімейний стан</label>
+              <select id="inputMyMarital" onchange="saveUserProfile()" class="w-full bg-cream-100 rounded-xl px-3 py-2.5 text-xs font-medium text-ink-900 focus:outline-none focus:ring-2 focus:ring-coral-400">
+                <option value="Не був(ла) у шлюбі">Не був(ла) у шлюбі</option>
+                <option value="Розлучений(а)">Розлучений(а)</option>
+                <option value="Вдівець/вдова">Вдівець/вдова</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-ink-500 mb-1">Освіта</label>
+              <select id="inputMyEducation" onchange="saveUserProfile()" class="w-full bg-cream-100 rounded-xl px-3 py-2.5 text-xs font-medium text-ink-900 focus:outline-none focus:ring-2 focus:ring-coral-400">
+                <option value="Вища освіта">Вища освіта</option>
+                <option value="Незакінчена вища">Незакінчена вища</option>
+                <option value="Середня спеціальна">Середня спеціальна</option>
+                <option value="Науковий ступінь">Науковий ступінь</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-ink-500 mb-1">Релігія / світогляд</label>
+              <select id="inputMyReligion" onchange="saveUserProfile()" class="w-full bg-cream-100 rounded-xl px-3 py-2.5 text-xs font-medium text-ink-900 focus:outline-none focus:ring-2 focus:ring-coral-400">
+                <option value="Християнство">Християнство</option>
+                <option value="Православ'я">Православ'я</option>
+                <option value="Греко-католицизм">Греко-католицизм</option>
+                <option value="Католицизм">Католицизм</option>
+                <option value="Протестантизм">Протестантизм</option>
+                <option value="Агностицизм">Агностицизм</option>
+                <option value="Атеїзм">Атеїзм</option>
+                <option value="Духовність без релігії">Духовність без релігії</option>
+                <option value="Інше">Інше</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-ink-500 mb-1">Домашні улюбленці</label>
+              <select id="inputMyPets" onchange="saveUserProfile()" class="w-full bg-cream-100 rounded-xl px-3 py-2.5 text-xs font-medium text-ink-900 focus:outline-none focus:ring-2 focus:ring-coral-400">
+                <option value="Немає">Немає</option>
+                <option value="Є кіт/коти">Є кіт/коти</option>
+                <option value="Є собака/собаки">Є собака/собаки</option>
+                <option value="Люблю тварин">Люблю тварин</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-2.5">
+            <div>
+              <label class="block text-[11px] font-semibold text-ink-500 mb-1">Алкоголь</label>
+              <select id="inputMyAlcohol" onchange="saveUserProfile()" class="w-full bg-cream-100 rounded-xl px-2.5 py-2 text-xs font-medium text-ink-900 focus:outline-none focus:ring-2 focus:ring-coral-400">
+                <option value="Не вживаю">Не вживаю</option>
+                <option value="Зрідка / у компанії">Зрідка / у компанії</option>
+                <option value="Помірно">Помірно</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-ink-500 mb-1">Куріння</label>
+              <select id="inputMySmoking" onchange="saveUserProfile()" class="w-full bg-cream-100 rounded-xl px-2.5 py-2 text-xs font-medium text-ink-900 focus:outline-none focus:ring-2 focus:ring-coral-400">
+                <option value="Не курю">Не курю</option>
+                <option value="Інколи">Інколи</option>
+                <option value="Курю / вейп">Курю / вейп</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-ink-500 mb-1">Спорт</label>
+              <select id="inputMySport" onchange="saveUserProfile()" class="w-full bg-cream-100 rounded-xl px-2.5 py-2 text-xs font-medium text-ink-900 focus:outline-none focus:ring-2 focus:ring-coral-400">
+                <option value="Регулярно тренуюсь">Регулярно</option>
+                <option value="Час від часу">Час від часу</option>
+                <option value="Рідко">Рідко</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-ink-500 mb-1.5">Мови спілкування</label>
+            <div id="myLanguagesGrid" class="flex flex-wrap gap-1.5">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-ink-500 mb-1">Про мене</label>
+            <textarea id="inputMyBio" rows="3" onchange="saveUserProfile()" class="w-full bg-cream-100 rounded-xl px-3.5 py-2.5 text-sm text-ink-900 leading-relaxed focus:outline-none focus:ring-2 focus:ring-coral-400"></textarea>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <label class="text-xs font-semibold text-ink-500">Мої інтереси (до 6)</label>
+              <span id="interestCounter" class="text-[11px] font-semibold text-coral-600">4/6</span>
+            </div>
+            <div id="myInterestsGrid" class="flex flex-wrap gap-2">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Discovery Quick Settings -->
+        <div class="bg-white rounded-3xl p-5 border border-cream-200 shadow-sm space-y-3">
+          <h3 class="font-bold text-sm text-ink-900">Налаштування видимості</h3>
+          <label class="flex items-center justify-between cursor-pointer">
+            <div>
+              <p class="text-sm font-medium text-ink-900">Показувати мене у стрічці</p>
+              <p class="text-xs text-ink-500">Вашу анкету бачитимуть люди поруч</p>
+            </div>
+            <input id="toggleDiscovery" type="checkbox" checked onchange="saveUserProfile()" class="w-5 h-5 accent-coral-500 rounded cursor-pointer" />
+          </label>
+          <div class="pt-2 border-t border-cream-200 flex justify-between items-center">
+            <span class="text-xs text-ink-500">Скинути демо-дані та свайпи</span>
+            <button onclick="resetDemoData()" class="text-xs font-semibold text-rose-600 hover:underline">Оновити все</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="bg-white border-t border-cream-200 px-6 py-2.5 flex items-center justify-around shrink-0 z-20">
+      <button onclick="switchTab('discover')" id="nav-discover" class="nav-btn flex flex-col items-center gap-1 py-1 px-4 rounded-2xl text-coral-500 transition">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2C12.4 7.5 16.5 11.6 22 12C16.5 12.4 12.4 16.5 12 22C11.6 16.5 7.5 12.4 2 12C7.5 11.6 11.6 7.5 12 2Z" />
+        </svg>
+        <span class="text-[11px] font-bold">Знайомства</span>
+      </button>
+
+      <button onclick="switchTab('matches')" id="nav-matches" class="nav-btn relative flex flex-col items-center gap-1 py-1 px-4 rounded-2xl text-ink-500 hover:text-ink-900 transition">
+        <div class="relative">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+          </svg>
+          <span id="navUnreadDot" class="hidden absolute -top-1 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-coral-500 text-white text-[10px] font-bold flex items-center justify-center">1</span>
+        </div>
+        <span class="text-[11px] font-semibold">Симпатії</span>
+      </button>
+
+      <button onclick="switchTab('profile')" id="nav-profile" class="nav-btn flex flex-col items-center gap-1 py-1 px-4 rounded-2xl text-ink-500 hover:text-ink-900 transition">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+        <span class="text-[11px] font-semibold">Профіль</span>
+      </button>
+    </nav>
+
+    <!-- ==================== OVERLAY 1: FILTER DRAWER ==================== -->
+    <div id="filterModal" class="hidden absolute inset-0 bg-ink-900/50 backdrop-blur-xs z-40 flex items-end">
+      <div class="w-full max-h-[90%] bg-cream-50 rounded-t-[32px] shadow-2xl border-t border-cream-200 flex flex-col overflow-hidden animate-card-in">
+        <!-- Sticky Drawer Header -->
+        <div class="px-6 pt-5 pb-3.5 bg-cream-50 border-b border-cream-200 flex items-center justify-between shrink-0">
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="font-serif text-xl font-bold text-ink-900">Фільтри пошуку</h3>
+              <span id="drawerFilterCounter" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-coral-50 text-coral-600">0 активних</span>
+            </div>
+            <p class="text-[11px] text-ink-500 mt-0.5">Налаштуйте параметри ідеального збігу</p>
+          </div>
+          <button onclick="closeFilters()" class="w-9 h-9 rounded-full bg-cream-200/70 hover:bg-cream-200 flex items-center justify-center text-ink-700 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Scrollable Filter Controls -->
+        <div class="flex-1 overflow-y-auto px-6 py-4 space-y-5">
+          <!-- Age Range -->
+          <div class="bg-white p-4 rounded-2xl border border-cream-200 space-y-2.5">
+            <div class="flex justify-between text-xs font-semibold">
+              <span class="text-ink-700">🎂 Віковий діапазон</span>
+              <span id="filterAgeLabel" class="text-coral-600 font-bold">20 – 40 років</span>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <span class="text-[11px] text-ink-500">Від: <b id="minAgeVal">20</b></span>
+                <input id="filterMinAge" type="range" min="18" max="50" value="20" oninput="updateFilterLabels()" class="w-full" />
+              </div>
+              <div>
+                <span class="text-[11px] text-ink-500">До: <b id="maxAgeVal">40</b></span>
+                <input id="filterMaxAge" type="range" min="20" max="60" value="40" oninput="updateFilterLabels()" class="w-full" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Height Range (cm) + Quick Presets -->
+          <div class="bg-white p-4 rounded-2xl border border-cream-200 space-y-2.5">
+            <div class="flex justify-between text-xs font-semibold">
+              <span class="text-ink-700">📏 Зріст</span>
+              <span id="filterHeightLabel" class="text-coral-600 font-bold">150 – 210 см</span>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <span class="text-[11px] text-ink-500">Від: <b id="minHeightVal">150</b> см</span>
+                <input id="filterMinHeight" type="range" min="150" max="205" value="150" oninput="updateFilterLabels()" class="w-full" />
+              </div>
+              <div>
+                <span class="text-[11px] text-ink-500">До: <b id="maxHeightVal">210</b> см</span>
+                <input id="filterMaxHeight" type="range" min="155" max="210" value="210" oninput="updateFilterLabels()" class="w-full" />
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <button type="button" onclick="applyHeightPreset(150, 170)" class="px-2.5 py-1 rounded-lg bg-cream-100 hover:bg-cream-200 text-[11px] font-semibold text-ink-700 transition">До 170 см</button>
+              <button type="button" onclick="applyHeightPreset(170, 185)" class="px-2.5 py-1 rounded-lg bg-cream-100 hover:bg-cream-200 text-[11px] font-semibold text-ink-700 transition">170–185 см</button>
+              <button type="button" onclick="applyHeightPreset(180, 210)" class="px-2.5 py-1 rounded-lg bg-cream-100 hover:bg-cream-200 text-[11px] font-semibold text-ink-700 transition">180+ см</button>
+              <button type="button" onclick="applyHeightPreset(150, 210)" class="px-2.5 py-1 rounded-lg bg-cream-100 hover:bg-cream-200 text-[11px] font-semibold text-ink-700 transition">Будь-який</button>
+            </div>
+          </div>
+
+          <!-- City Filter -->
+          <div>
+            <label class="block text-xs font-bold text-ink-700 mb-2">📍 Місто</label>
+            <div id="filterCityPills" class="flex flex-wrap gap-1.5"></div>
+          </div>
+
+          <!-- Relationship Format / Goal Filter -->
+          <div>
+            <label class="block text-xs font-bold text-ink-700 mb-2">🎯 Формат відносин</label>
+            <div id="filterGoalPills" class="flex flex-wrap gap-1.5"></div>
+          </div>
+
+          <!-- First Date Payment Filter -->
+          <div>
+            <label class="block text-xs font-bold text-ink-700 mb-2">☕ Оплата на першому побаченні</label>
+            <div id="filterPaymentPills" class="flex flex-wrap gap-1.5"></div>
+          </div>
+
+          <!-- Children (Have) -->
+          <div>
+            <label class="block text-xs font-bold text-ink-700 mb-2">👶 Наявність дітей</label>
+            <div id="filterChildrenHavePills" class="flex flex-wrap gap-1.5"></div>
+          </div>
+
+          <!-- Children (Future Desire) -->
+          <div>
+            <label class="block text-xs font-bold text-ink-700 mb-2">🍼 Ставлення до дітей у майбутньому</label>
+            <div id="filterChildrenWantPills" class="flex flex-wrap gap-1.5"></div>
+          </div>
+
+          <!-- Marital Status -->
+          <div>
+            <label class="block text-xs font-bold text-ink-700 mb-2">💍 Сімейний стан</label>
+            <div id="filterMaritalPills" class="flex flex-wrap gap-1.5"></div>
+          </div>
+
+          <!-- Education -->
+          <div>
+            <label class="block text-xs font-bold text-ink-700 mb-2">🎓 Освіта</label>
+            <div id="filterEducationPills" class="flex flex-wrap gap-1.5"></div>
+          </div>
+
+          <!-- Religion / Worldview -->
+          <div>
+            <label class="block text-xs font-bold text-ink-700 mb-2">🕊️ Релігія / світогляд</label>
+            <div id="filterReligionPills" class="flex flex-wrap gap-1.5"></div>
+          </div>
+
+          <!-- Habits: Alcohol, Smoking, Sport -->
+          <div class="space-y-4 pt-1 border-t border-cream-200">
+            <div>
+              <label class="block text-xs font-bold text-ink-700 mb-2">🍷 Алкоголь</label>
+              <div id="filterAlcoholPills" class="flex flex-wrap gap-1.5"></div>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-ink-700 mb-2">🚭 Куріння</label>
+              <div id="filterSmokingPills" class="flex flex-wrap gap-1.5"></div>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-ink-700 mb-2">🏃 Спорт і активність</label>
+              <div id="filterSportPills" class="flex flex-wrap gap-1.5"></div>
+            </div>
+          </div>
+
+          <!-- Pets -->
+          <div>
+            <label class="block text-xs font-bold text-ink-700 mb-2">🐾 Домашні улюбленці</label>
+            <div id="filterPetsPills" class="flex flex-wrap gap-1.5"></div>
+          </div>
+
+          <!-- Languages -->
+          <div class="pb-2">
+            <label class="block text-xs font-bold text-ink-700 mb-2">🗣️ Мови спілкування</label>
+            <div id="filterLanguagePills" class="flex flex-wrap gap-1.5"></div>
+          </div>
+        </div>
+
+        <!-- Sticky Drawer Footer -->
+        <div class="px-6 py-4 bg-white border-t border-cream-200 flex gap-3 shrink-0">
+          <button onclick="resetFilters()" class="flex-1 py-3 rounded-2xl bg-cream-200/70 text-ink-700 text-sm font-semibold hover:bg-cream-200 transition">Скинути все</button>
+          <button onclick="applyFilters()" class="flex-[2] py-3 rounded-2xl bg-coral-500 text-white text-sm font-bold shadow-md shadow-coral-500/25 hover:bg-coral-600 transition">Застосувати</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== OVERLAY 2: IT'S A MATCH! CELEBRATION ==================== -->
+    <div id="matchOverlay" class="hidden absolute inset-0 bg-gradient-to-b from-ink-900/95 via-ink-900/95 to-coral-600/95 backdrop-blur-md z-50 p-6 flex flex-col items-center justify-between text-white text-center">
+      <div class="w-full flex justify-end">
+        <button onclick="closeMatchOverlay()" class="text-white/70 hover:text-white text-xs font-semibold px-3 py-1.5 rounded-full bg-white/10">Продовжити пошук</button>
+      </div>
+
+      <div class="space-y-4 my-auto w-full">
+        <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-coral-500/30 border border-coral-400/40 text-coral-100 text-xs font-semibold">
+          <span>✨ Іскра спалахнула</span>
+        </div>
+        <h2 class="font-serif text-4xl font-bold tracking-tight">Взаємна симпатія!</h2>
+        <p id="matchSubtitle" class="text-sm text-cream-200 max-w-xs mx-auto">Ви та Софія вподобали одне одного. Зробіть перший крок!</p>
+
+        <!-- Dual Avatars -->
+        <div class="flex items-center justify-center py-4 relative">
+          <div id="matchMyAvatar" class="w-28 h-28 rounded-3xl border-4 border-white shadow-2xl overflow-hidden -rotate-6"></div>
+          <div class="w-11 h-11 rounded-full bg-coral-500 border-4 border-ink-900 flex items-center justify-center z-10 -mx-3 animate-spark shadow-lg">
+            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+            </svg>
+          </div>
+          <div id="matchPartnerAvatar" class="w-28 h-28 rounded-3xl border-4 border-white shadow-2xl overflow-hidden rotate-6"></div>
+        </div>
+
+        <!-- Quick Icebreaker Form -->
+        <form onsubmit="sendMatchIcebreaker(event)" class="space-y-2.5 pt-2">
+          <div class="flex gap-2">
+            <input id="matchIcebreakerInput" type="text" placeholder="Напишіть комплімент або питання..." class="flex-1 bg-white/15 border border-white/25 text-white placeholder-white/60 text-sm px-4 py-3 rounded-2xl focus:outline-none focus:bg-white/20" />
+            <button type="submit" class="px-5 py-3 rounded-2xl bg-white text-coral-600 font-bold text-sm shadow-lg hover:bg-cream-50 transition active:scale-95">Надіслати</button>
+          </div>
+          <div id="matchQuickChips" class="flex flex-wrap justify-center gap-1.5 pt-1">
+            <!-- Populated by JS -->
+          </div>
+        </form>
+      </div>
+
+      <div class="h-2"></div>
+    </div>
+
+    <!-- ==================== OVERLAY 3: PROFILE PREVIEW / DETAILS MODAL ==================== -->
+    <div id="detailModal" class="hidden absolute inset-0 bg-ink-900/60 backdrop-blur-xs z-50 p-4 flex items-center justify-center">
+      <div class="w-full max-h-[88%] bg-cream-50 rounded-3xl overflow-hidden shadow-2xl border border-cream-200 flex flex-col animate-card-in">
+        <div id="detailModalBody" class="overflow-y-auto flex-1">
+          <!-- Populated by JS -->
+        </div>
+        <div class="p-3.5 bg-white border-t border-cream-200 flex justify-center">
+          <button onclick="closeDetailModal()" class="w-full py-2.5 rounded-2xl bg-ink-900 text-white text-sm font-semibold hover:bg-ink-700 transition">Закрити перегляд</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification Banner -->
+    <div id="toastBanner" class="hidden absolute top-16 left-1/2 -translate-x-1/2 bg-ink-900 text-white text-xs font-semibold px-4 py-2.5 rounded-full shadow-xl z-50 whitespace-nowrap transition-opacity">
+      Повідомлення
+    </div>
+
+  </div>
+
+  <script>
+    // ==================== DATA & SVG PORTRAIT GENERATOR ====================
+
+    /**
+     * Generates crisp, warm editorial SVG illustrated portraits with zero external image dependencies
+     */
+    function createPortraitSVG(config) {
+      const { bgStart, bgEnd, skin, hair, hairStyle, shirt, accessory } = config;
+      const uid = 'grad_' + Math.random().toString(36).substring(2, 9);
+
+      let hairBack = '';
+      let hairFront = '';
+
+      if (hairStyle === 'long') {
+        hairBack = `<path d="M58 95 C55 155, 52 195, 68 215 L152 215 C168 195, 165 155, 162 95 Z" fill="${hair}" />`;
+        hairFront = `<path d="M64 92 C64 52, 156 52, 156 92 C145 72, 115 68, 95 82 C80 92, 68 95, 64 92 Z" fill="${hair}" />`;
+      } else if (hairStyle === 'bob') {
+        hairBack = `<path d="M60 95 C56 140, 62 165, 76 172 L144 172 C158 165, 164 140, 160 95 Z" fill="${hair}" />`;
+        hairFront = `<path d="M63 94 C65 50, 155 50, 157 94 C140 76, 95 74, 63 94 Z" fill="${hair}" />`;
+      } else if (hairStyle === 'curly') {
+        hairBack = `
+          <circle cx="68" cy="88" r="22" fill="${hair}" />
+          <circle cx="152" cy="88" r="22" fill="${hair}" />
+          <circle cx="64" cy="118" r="20" fill="${hair}" />
+          <circle cx="156" cy="118" r="20" fill="${hair}" />
+          <circle cx="72" cy="144" r="18" fill="${hair}" />
+          <circle cx="148" cy="144" r="18" fill="${hair}" />
+        `;
+        hairFront = `
+          <circle cx="85" cy="64" r="22" fill="${hair}" />
+          <circle cx="110" cy="58" r="24" fill="${hair}" />
+          <circle cx="136" cy="64" r="22" fill="${hair}" />
+        `;
+      } else {
+        // Short modern style
+        hairFront = `<path d="M67 92 C66 52, 154 52, 153 92 C148 70, 125 65, 102 68 C82 70, 72 78, 67 92 Z" fill="${hair}" />`;
+      }
+
+      const glassesSvg = accessory === 'glasses'
+        ? `<g stroke="#1D1B18" stroke-width="2.5" fill="rgba(255,255,255,0.2)">
+             <rect x="81" y="96" width="23" height="16" rx="5" />
+             <rect x="116" y="96" width="23" height="16" rx="5" />
+             <line x1="104" y1="103" x2="116" y2="103" />
+           </g>`
+        : '';
+
+      return `
+        <svg viewBox="0 0 220 240" class="w-full h-full object-cover" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="${uid}" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="${bgStart}" />
+              <stop offset="100%" stop-color="${bgEnd}" />
+            </linearGradient>
+          </defs>
+          <rect width="220" height="240" fill="url(#${uid})" />
+          <!-- Decorative soft shapes -->
+          <circle cx="185" cy="45" r="55" fill="white" fill-opacity="0.14" />
+          <circle cx="30" cy="195" r="65" fill="white" fill-opacity="0.1" />
+          ${hairBack}
+          <!-- Neck & Shoulders -->
+          <rect x="96" y="132" width="28" height="34" rx="12" fill="${skin}" />
+          <path d="M42 240 C46 184, 76 164, 110 164 C144 164, 174 184, 178 240 Z" fill="${shirt}" />
+          <path d="M92 165 Q110 184 128 165" fill="none" stroke="rgba(0,0,0,0.12)" stroke-width="3" />
+          <!-- Head -->
+          <rect x="72" y="64" width="76" height="86" rx="38" fill="${skin}" />
+          <!-- Gentle Blush & Features -->
+          <circle cx="86" cy="116" r="6" fill="#E55A3C" fill-opacity="0.18" />
+          <circle cx="134" cy="116" r="6" fill="#E55A3C" fill-opacity="0.18" />
+          <circle cx="93" cy="104" r="3.5" fill="#1D1B18" />
+          <circle cx="127" cy="104" r="3.5" fill="#1D1B18" />
+          <path d="M108 106 L106 116 L112 117" fill="none" stroke="rgba(29,27,24,0.28)" stroke-width="2" stroke-linecap="round" />
+          <path d="M99 127 Q110 136 121 127" fill="none" stroke="#1D1B18" stroke-width="2.6" stroke-linecap="round" />
+          ${hairFront}
+          ${glassesSvg}
+        </svg>
+      `;
+    }
+
+    const ALL_INTERESTS = [
+      'Кав’ярні третьої хвилі', 'Походи в Карпати', 'Сучасна література',
+      'Кіно та артхаус', 'Біг вранці', 'Настільні ігри',
+      'Кулінарія', 'Подорожі Україною', 'Джаз і вініл',
+      'Психологія', 'Велопрогулянки', 'Волонтерство',
+      'Фотографія', 'Театр', 'Йога'
+    ];
+
+    const FIRST_DATE_PAYMENT_OPTIONS = [
+      'Платить чоловік',
+      '50/50',
+      'Платить жінка'
+    ];
+
+    const FILTER_OPTIONS = {
+      cities: ['Усі міста', 'Київ', 'Львів', 'Одеса', 'Дніпро', 'Харків', 'Вінниця', 'Івано-Франківськ', 'Полтава'],
+      goals: ['Усі цілі', 'Серйозні стосунки', 'Сім\'я та шлюб', 'Романтика і побачення', 'Дружба та спілкування', 'Вільні стосунки', 'Ще визначаюсь'],
+      payment: ['Будь-який', 'Платить чоловік', '50/50', 'Платить жінка'],
+      childrenHave: ['Будь-який', 'Немає дітей', 'Є діти (живуть разом)', 'Є діти (живуть окремо)'],
+      childrenWant: ['Будь-який', 'Хочу дітей', 'Не планую дітей', 'Відкритий(а) до обговорення'],
+      marital: ['Будь-який', 'Не був(ла) у шлюбі', 'Розлучений(а)', 'Вдівець/вдова'],
+      education: ['Будь-яка', 'Вища освіта', 'Незакінчена вища', 'Середня спеціальна', 'Науковий ступінь'],
+      religion: ['Будь-яка', 'Християнство', 'Православ\'я', 'Греко-католицизм', 'Католицизм', 'Протестантизм', 'Агностицизм', 'Атеїзм', 'Духовність без релігії', 'Інше'],
+      alcohol: ['Будь-яке', 'Не вживаю', 'Зрідка / у компанії', 'Помірно'],
+      smoking: ['Будь-яке', 'Не курю', 'Інколи', 'Курю / вейп'],
+      sport: ['Будь-яка', 'Регулярно тренуюсь', 'Час від часу', 'Рідко'],
+      pets: ['Будь-які', 'Немає', 'Є кіт/коти', 'Є собака/собаки', 'Люблю тварин'],
+      languages: ['Будь-яка', 'Українська', 'Англійська', 'Польська', 'Німецька', 'Іспанська', 'Французька']
+    };
+
+    const CANDIDATES = [
+      {
+        id: 'sofia_26',
+        name: 'Софія',
+        age: 26,
+        height: 168,
+        city: 'Київ',
+        distance: '2 км від вас',
+        job: 'Архітекторка інтер’єрів',
+        goal: 'Серйозні стосунки',
+        firstDatePayment: 'Платить чоловік',
+        childrenHave: 'Немає дітей',
+        childrenWant: 'Хочу дітей',
+        maritalStatus: 'Не був(ла) у шлюбі',
+        education: 'Вища освіта',
+        religion: 'Християнство',
+        alcohol: 'Зрідка / у компанії',
+        smoking: 'Не курю',
+        sport: 'Час від часу',
+        pets: 'Є кіт/коти',
+        languages: ['Українська', 'Англійська'],
+        bio: 'Шукаю людину, з якою однаково затишно мовчати за ранковою фільтр-кавою на Подолі та планувати спонтанну поїздку в гори.',
+        values: 'Щирість, почуття гумору, взаємна підтримка',
+        bookOrHabit: 'Перечитую «Місто» Підмогильного та збираю вінілові платівки',
+        interests: ['Кав’ярні третьої хвилі', 'Походи в Карпати', 'Сучасна література', 'Фотографія'],
+        willMatch: true,
+        icebreakers: [
+          'Яка кав’ярня на Подолі зараз твій абсолютний фаворит?',
+          'Маршрут у Карпатах: Говерла чи більш дикі хребти?',
+          'Ого, вініл! Яка платівка крутиться найчастіше?'
+        ],
+        replies: [
+          'Привіт! Дуже приємно познайомитися 😊 На Подолі зараз обожнюю затишні місця біля Житнього ринку. А ти більше по фільтру чи по класичному капучино?',
+          'О, це точно тема для довгої розмови! Може якось влаштуємо дегустацію кави на вихідних?'
+        ],
+        portrait: { bgStart: '#FAD0C4', bgEnd: '#FF9A9E', skin: '#F7D3BA', hair: '#3B2820', hairStyle: 'long', shirt: '#E55A3C', accessory: 'none' }
+      },
+      {
+        id: 'bohdan_29',
+        name: 'Богдан',
+        age: 29,
+        height: 183,
+        city: 'Львів',
+        distance: '4 км від вас',
+        job: 'Розробник та бариста вихідного дня',
+        goal: 'Романтика і побачення',
+        firstDatePayment: 'Платить чоловік',
+        childrenHave: 'Немає дітей',
+        childrenWant: 'Відкритий(а) до обговорення',
+        maritalStatus: 'Не був(ла) у шлюбі',
+        education: 'Вища освіта',
+        religion: 'Агностицизм',
+        alcohol: 'Зрідка / у компанії',
+        smoking: 'Не курю',
+        sport: 'Регулярно тренуюсь',
+        pets: 'Люблю тварин',
+        languages: ['Українська', 'Англійська', 'Польська'],
+        bio: 'Вмію заварити ідеальну V60, знаю всі секретні дворики Львова і завжди «за» вечірню прогулянку без телефону.',
+        values: 'Легкість у спілкуванні, відкритість, допитливість',
+        bookOrHabit: 'Щонеділі готую домашню пасту з нуля',
+        interests: ['Кав’ярні третьої хвилі', 'Кулінарія', 'Велопрогулянки', 'Джаз і вініл'],
+        willMatch: true,
+        icebreakers: [
+          'Навчиш заварювати V60 так, щоб не гірчило?',
+          'Який твій фірмовий соус до домашньої пасти?',
+          'Який дворик у Львові вважаєш найбільш недооціненим?'
+        ],
+        replies: [
+          'Привіт! З радістю поділюся секретом правильного помелу і температури води 😄 До речі, дуже класна анкета!',
+          'Якщо будеш у Львові або захочеш влаштувати кулінарний батл — я завжди за!'
+        ],
+        portrait: { bgStart: '#A1C4FD', bgEnd: '#C2E9FB', skin: '#ECC4A8', hair: '#2C221E', hairStyle: 'short', shirt: '#2B4C7E', accessory: 'glasses' }
+      },
+      {
+        id: 'solomia_25',
+        name: 'Соломія',
+        age: 25,
+        height: 164,
+        city: 'Львів',
+        distance: '3 км від вас',
+        job: 'Ілюстраторка дитячих книжок',
+        goal: 'Серйозні стосунки',
+        firstDatePayment: '50/50',
+        childrenHave: 'Немає дітей',
+        childrenWant: 'Хочу дітей',
+        maritalStatus: 'Не був(ла) у шлюбі',
+        education: 'Вища освіта',
+        religion: 'Греко-католицизм',
+        alcohol: 'Не вживаю',
+        smoking: 'Не курю',
+        sport: 'Час від часу',
+        pets: 'Є кіт/коти',
+        languages: ['Українська', 'Англійська', 'Польська'],
+        bio: 'Малюю теплі історії, обожнюю неспішні сніданки, кінофестивалі та шукаю партнера, з яким можна сміятися до сліз.',
+        values: 'Доброта, глибина, повага до особистих кордонів',
+        bookOrHabit: 'Завжди ношу із собою скетчбук і роблю замальовки людей у метро чи трамваї',
+        interests: ['Кіно та артхаус', 'Театр', 'Сучасна література', 'Йога'],
+        willMatch: true,
+        icebreakers: [
+          'Що останнє з кіно чи театру тебе по-справжньому вразило?',
+          'Розкажи про найцікавішу книжку, яку ти ілюструвала!',
+          'Сніданок о 9 ранку чи бранч о 13:00?'
+        ],
+        replies: [
+          'Привіт! Дякую, що написав(ла) ✨ Нещодавно була на прем’єрі в театрі Курбаса — досі під враженням. А які фільми любиш ти?',
+          'Мені здається, у нас дуже схожий вайб!'
+        ],
+        portrait: { bgStart: '#F6D365', bgEnd: '#FDA085', skin: '#F9D8C2', hair: '#7A3E26', hairStyle: 'curly', shirt: '#3D5A45', accessory: 'none' }
+      },
+      {
+        id: 'taras_31',
+        name: 'Тарас',
+        age: 31,
+        height: 187,
+        city: 'Київ',
+        distance: '5 км від вас',
+        job: 'Менеджер культурних проєктів',
+        goal: 'Сім\'я та шлюб',
+        firstDatePayment: 'Платить чоловік',
+        childrenHave: 'Немає дітей',
+        childrenWant: 'Хочу дітей',
+        maritalStatus: 'Не був(ла) у шлюбі',
+        education: 'Вища освіта',
+        religion: 'Православ\'я',
+        alcohol: 'Зрідка / у компанії',
+        smoking: 'Не курю',
+        sport: 'Регулярно тренуюсь',
+        pets: 'Є собака/собаки',
+        languages: ['Українська', 'Англійська'],
+        bio: 'Люблю український стендап, ранкові пробіжки вздовж Дніпра та змістовні розмови до пізньої ночі. Ціную людей із власним вогником.',
+        values: 'Відповідальність, чесність, спільний розвиток',
+        bookOrHabit: 'Пробіг два півмарафони та вчуся грати на укулеле',
+        interests: ['Біг вранці', 'Подорожі Україною', 'Волонтерство', 'Настільні ігри'],
+        willMatch: true,
+        icebreakers: [
+          'Яка дистанція зараз комфортна для ранкової пробіжки?',
+          'Яку настільну гру готовий розкласти хоч сьогодні ввечері?',
+          'Яке місто в Україні відкрив для себе по-новому останнім часом?'
+        ],
+        replies: [
+          'Привіт! Радий знайомству 🙌 Зараз зазвичай бігаю 7–8 км біля Набережної, чудово перезавантажує голову перед роботою.',
+          'Круто, що тобі теж близька ця тема! Як проходить твій тиждень?'
+        ],
+        portrait: { bgStart: '#D4FC79', bgEnd: '#96E6A1', skin: '#E9BF9F', hair: '#1F1B18', hairStyle: 'short', shirt: '#264653', accessory: 'none' }
+      },
+      {
+        id: 'daryna_27',
+        name: 'Дарина',
+        age: 27,
+        height: 172,
+        city: 'Одеса',
+        distance: '1 км від вас',
+        job: 'Маркетологиня у книжковому видавництві',
+        goal: 'Дружба та спілкування',
+        firstDatePayment: 'Платить жінка',
+        childrenHave: 'Немає дітей',
+        childrenWant: 'Не планую дітей',
+        maritalStatus: 'Не був(ла) у шлюбі',
+        education: 'Вища освіта',
+        religion: 'Атеїзм',
+        alcohol: 'Помірно',
+        smoking: 'Інколи',
+        sport: 'Час від часу',
+        pets: 'Немає',
+        languages: ['Українська', 'Англійська', 'Іспанська'],
+        bio: 'Прокидаюся раніше за сонце, щоб зустріти світанок біля моря. Шукаю компанію для книжкових клубів, велопоїздок і нових маршрутів.',
+        values: 'Свобода, гумор, щира цікавість до світу',
+        bookOrHabit: 'Веду власний список із 50 найкращих українських подкастів',
+        interests: ['Сучасна література', 'Велопрогулянки', 'Подорожі Україною', 'Психологія'],
+        willMatch: true,
+        icebreakers: [
+          'Світанок біля моря — це сила! Який пляж в Одесі найспокійніший?',
+          'Поділишся топ-3 подкастами зі свого списку?',
+          'Яка книжка видавництва зараз у тебе на тумбочці?'
+        ],
+        replies: [
+          'Привіт! Світанки біля Ланжерону восени чи навесні — це окремий вид терапії 🌊 Рада нашій іскрі!',
+          'Обов’язково скину добірку подкастів, тобі точно сподобається!'
+        ],
+        portrait: { bgStart: '#FCCB90', bgEnd: '#D57EEB', skin: '#F6CFB6', hair: '#5A3825', hairStyle: 'bob', shirt: '#6D4C7D', accessory: 'glasses' }
+      },
+      {
+        id: 'artem_34',
+        name: 'Артем',
+        age: 34,
+        height: 181,
+        city: 'Вінниця',
+        distance: '3 км від вас',
+        job: 'Лікар-реабілітолог',
+        goal: 'Серйозні стосунки',
+        firstDatePayment: '50/50',
+        childrenHave: 'Є діти (живуть окремо)',
+        childrenWant: 'Відкритий(а) до обговорення',
+        maritalStatus: 'Розлучений(а)',
+        education: 'Науковий ступінь',
+        religion: 'Християнство',
+        alcohol: 'Не вживаю',
+        smoking: 'Не курю',
+        sport: 'Регулярно тренуюсь',
+        pets: 'Є собака/собаки',
+        languages: ['Українська', 'Англійська', 'Німецька'],
+        bio: 'Допомагаю людям повертатися до активного життя. У вільний час ходжу в походи, готую бограч на багатті й ціную домашній затишок.',
+        values: 'Турбота, надійність, спокійна сила',
+        bookOrHabit: 'Колекціоную локальні трав’яні чаї з різних регіонів України',
+        interests: ['Походи в Карпати', 'Кулінарія', 'Волонтерство', 'Подорожі Україною'],
+        willMatch: true,
+        icebreakers: [
+          'З якого регіону найсмачніший трав’яний чай у твоїй колекції?',
+          'Секрет справжнього бограчу на багатті розкриєш?',
+          'Яка вершина в Карпатах запам’яталася найбільше?'
+        ],
+        replies: [
+          'Привіт! Найароматніший чебрець і м’яту привіз із Закарпаття, заварюю після кожного тренування 🍵 Дуже приємно познайомитися!',
+          'Як твій настрій сьогодні?'
+        ],
+        portrait: { bgStart: '#84FAB0', bgEnd: '#8FD3F4', skin: '#EBC2A4', hair: '#3A2E25', hairStyle: 'short', shirt: '#1D3557', accessory: 'none' }
+      },
+      {
+        id: 'kateryna_24',
+        name: 'Катерина',
+        age: 24,
+        height: 162,
+        city: 'Харків',
+        distance: '2 км від вас',
+        job: 'Графічна дизайнерка',
+        goal: 'Романтика і побачення',
+        firstDatePayment: '50/50',
+        childrenHave: 'Немає дітей',
+        childrenWant: 'Відкритий(а) до обговорення',
+        maritalStatus: 'Не був(ла) у шлюбі',
+        education: 'Незакінчена вища',
+        religion: 'Духовність без релігії',
+        alcohol: 'Зрідка / у компанії',
+        smoking: 'Не курю',
+        sport: 'Рідко',
+        pets: 'Є кіт/коти',
+        languages: ['Українська', 'Англійська'],
+        bio: 'Обожнюю незламний Харків, виставки сучасного мистецтва та вечірні настілки з друзями. Шукаю людину, з якою легко бути собою.',
+        values: 'Креативність, щирість, підтримка',
+        bookOrHabit: 'Роблю авторські листівки та збираю рідкісні шрифти',
+        interests: ['Настільні ігри', 'Фотографія', 'Кіно та артхаус', 'Кав’ярні третьої хвилі'],
+        willMatch: true,
+        icebreakers: [
+          'Яка настільна гра гарантовано перевіряє дружбу на міцність?',
+          'Де в Харкові зараз найатмосферніша кава?',
+          'Покажеш якось свої авторські листівки?'
+        ],
+        replies: [
+          'Привіт! Каркассон і Кодові імена — це класика, після якої неможливо не сміятися 😄 Дякую за симпатію!',
+          'Класно, що ми збіглися!'
+        ],
+        portrait: { bgStart: '#FF9A9E', bgEnd: '#FECFEF', skin: '#F8D6C1', hair: '#231F20', hairStyle: 'bob', shirt: '#C94A4A', accessory: 'none' }
+      },
+      {
+        id: 'maksym_28',
+        name: 'Максим',
+        age: 28,
+        height: 179,
+        city: 'Полтава',
+        distance: '2 км від вас',
+        job: 'Інженер відновлюваної енергетики',
+        goal: 'Серйозні стосунки',
+        firstDatePayment: 'Платить жінка',
+        childrenHave: 'Немає дітей',
+        childrenWant: 'Хочу дітей',
+        maritalStatus: 'Не був(ла) у шлюбі',
+        education: 'Вища освіта',
+        religion: 'Агностицизм',
+        alcohol: 'Зрідка / у компанії',
+        smoking: 'Не курю',
+        sport: 'Регулярно тренуюсь',
+        pets: 'Люблю тварин',
+        languages: ['Українська', 'Англійська'],
+        bio: 'Вірю в зелені технології, люблю веломаршрути вздовж Ворскли та готую найкращі сирники у Полтаві.',
+        values: 'Чесність, повага, оптимізм',
+        bookOrHabit: 'Граю в теніс та слухаю український інді-рок',
+        interests: ['Велопрогулянки', 'Кулінарія', 'Джаз і вініл', 'Біг вранці'],
+        willMatch: true,
+        icebreakers: [
+          'У чому головний секрет ідеальних сирників: більше сиру чи манки?',
+          'Який український інді-гурт зараз на повторі?',
+          'Скільки кілометрів зазвичай проїжджаєш на велосипеді?'
+        ],
+        replies: [
+          'Привіт! Секрет у сухому фермерському сирі та мінімумі борошна — перевірено десятками сніданків 😊 Радий знайомству!',
+          'А які сніданки любиш ти?'
+        ],
+        portrait: { bgStart: '#E0C3FC', bgEnd: '#8EC5FC', skin: '#ECC5A8', hair: '#4A3525', hairStyle: 'curly', shirt: '#3A506B', accessory: 'glasses' }
+      },
+      {
+        id: 'olena_32',
+        name: 'Олена',
+        age: 32,
+        height: 175,
+        city: 'Дніпро',
+        distance: '3 км від вас',
+        job: 'Фінансова аналітикиня',
+        goal: 'Сім\'я та шлюб',
+        firstDatePayment: 'Платить чоловік',
+        childrenHave: 'Є діти (живуть разом)',
+        childrenWant: 'Відкритий(а) до обговорення',
+        maritalStatus: 'Розлучений(а)',
+        education: 'Вища освіта',
+        religion: 'Православ\'я',
+        alcohol: 'Не вживаю',
+        smoking: 'Не курю',
+        sport: 'Час від часу',
+        pets: 'Немає',
+        languages: ['Українська', 'Англійська', 'Німецька'],
+        bio: 'Виховую доньку-школярку, обожнюю прогулянки Січеславською набережною, сучасний театр і затишні сімейні вечері.',
+        values: 'Зрілість, теплота, довіра та повага',
+        bookOrHabit: 'Збираю рецепти української регіональної кухні',
+        interests: ['Театр', 'Кулінарія', 'Подорожі Україною', 'Психологія'],
+        willMatch: true,
+        icebreakers: [
+          'Яка страва регіональної української кухні стала твоїм відкриттям?',
+          'Яку виставу у Дніпрі порадиш переглянути насамперед?',
+          'Вечірня прогулянка набережною чи затишна кав’ярня?'
+        ],
+        replies: [
+          'Привіт! Дуже приємно познайомитися 🌸 Нещодавно готувала галицький яворівський пиріг — вийшло неймовірно смачно!',
+          'Ціную щирий інтерес, розкажи трохи про свої улюблені місця для відпочинку.'
+        ],
+        portrait: { bgStart: '#FBC2EB', bgEnd: '#A6C1EE', skin: '#F7D3BA', hair: '#4A2C1D', hairStyle: 'long', shirt: '#3B5998', accessory: 'none' }
+      },
+      {
+        id: 'nazar_27',
+        name: 'Назар',
+        age: 27,
+        height: 190,
+        city: 'Івано-Франківськ',
+        distance: '1 км від вас',
+        job: 'Гірський гід та фотограф',
+        goal: 'Романтика і побачення',
+        firstDatePayment: 'Платить чоловік',
+        childrenHave: 'Немає дітей',
+        childrenWant: 'Хочу дітей',
+        maritalStatus: 'Не був(ла) у шлюбі',
+        education: 'Середня спеціальна',
+        religion: 'Греко-католицизм',
+        alcohol: 'Зрідка / у компанії',
+        smoking: 'Інколи',
+        sport: 'Регулярно тренуюсь',
+        pets: 'Є собака/собаки',
+        languages: ['Українська', 'Польська', 'Англійська'],
+        bio: 'Знаю кожну стежку в Ґорґанах і Чорногорі. У місті люблю затишні кав’ярні на стометрівці та живі концерти.',
+        values: 'Свобода, щирість, любов до природи',
+        bookOrHabit: 'Знімаю Карпати на плівковий фотоапарат',
+        interests: ['Походи в Карпати', 'Фотографія', 'Подорожі Україною', 'Джаз і вініл'],
+        willMatch: true,
+        icebreakers: [
+          'Який маршрут у Ґорґанах ідеальний для вихідних без натовпу?',
+          'На яку плівку зараз знімаєш гірські світанки?',
+          'Де у Франківську найсмачніший банош?'
+        ],
+        replies: [
+          'Привіт! В Ґорґанах раджу маршрут на Сивулю або Грофу — краєвиди там просто космічні ⛰️ Радий нашій симпатії!',
+          'Якщо колись зберешся в гори — з радістю підкажу найкращі точки.'
+        ],
+        portrait: { bgStart: '#C1DFC4', bgEnd: '#DEECDD', skin: '#E9BF9F', hair: '#2E231C', hairStyle: 'short', shirt: '#2D4A3E', accessory: 'none' }
+      },
+      {
+        id: 'iryna_35',
+        name: 'Ірина',
+        age: 35,
+        height: 170,
+        city: 'Київ',
+        distance: '4 км від вас',
+        job: 'Психотерапевтка',
+        goal: 'Серйозні стосунки',
+        firstDatePayment: '50/50',
+        childrenHave: 'Є діти (живуть разом)',
+        childrenWant: 'Не планую дітей',
+        maritalStatus: 'Розлучений(а)',
+        education: 'Науковий ступінь',
+        religion: 'Духовність без релігії',
+        alcohol: 'Зрідка / у компанії',
+        smoking: 'Не курю',
+        sport: 'Регулярно тренуюсь',
+        pets: 'Є кіт/коти',
+        languages: ['Українська', 'Англійська', 'Французька'],
+        bio: 'Ціную глибокий контакт, гумор та емоційну зрілість. Люблю ранкову йогу, французьке кіно й неспішні розмови за келихом сухого вина.',
+        values: 'Усвідомленість, повага, щирість',
+        bookOrHabit: 'Практикую медитацію та вивчаю французьку мову',
+        interests: ['Психологія', 'Йога', 'Кіно та артхаус', 'Театр'],
+        willMatch: true,
+        icebreakers: [
+          'Який французький фільм ти б переглянула ще раз хоч сьогодні?',
+          'Що допомагає тобі найкраще відновлювати ресурс після насиченого тижня?',
+          'Як просувається вивчення французької?'
+        ],
+        replies: [
+          'Привіт! Дуже тепло від твоєї анкети ✨ Обожнюю фільми Франсуа Озона та стару нову хвилю. А яке кіно надихає тебе?',
+          'Приємно спілкуватися з людиною на одній хвилі!'
+        ],
+        portrait: { bgStart: '#F5EFE6', bgEnd: '#E8D5B7', skin: '#F6CFB6', hair: '#6A3B2B', hairStyle: 'bob', shirt: '#7F4F24', accessory: 'glasses' }
+      },
+      {
+        id: 'dmytro_26',
+        name: 'Дмитро',
+        age: 26,
+        height: 176,
+        city: 'Одеса',
+        distance: '3 км від вас',
+        job: 'Продакт-менеджер у стартапі',
+        goal: 'Вільні стосунки',
+        firstDatePayment: '50/50',
+        childrenHave: 'Немає дітей',
+        childrenWant: 'Не планую дітей',
+        maritalStatus: 'Не був(ла) у шлюбі',
+        education: 'Вища освіта',
+        religion: 'Атеїзм',
+        alcohol: 'Помірно',
+        smoking: 'Курю / вейп',
+        sport: 'Час від часу',
+        pets: 'Немає',
+        languages: ['Українська', 'Англійська'],
+        bio: 'Люблю динаміку, нічні прогулянки біля моря, настільні ігри та спонтанні подорожі вихідного дня без жорсткого плану.',
+        values: 'Чесність на старті, легкість, гумор',
+        bookOrHabit: 'Збираю друзів щоп’ятниці на вечір мафії та покеру',
+        interests: ['Настільні ігри', 'Кав’ярні третьої хвилі', 'Подорожі Україною', 'Кіно та артхаус'],
+        willMatch: true,
+        icebreakers: [
+          'Яка роль у «Мафії» в тебе виходить найпереконливіше?',
+          'Куди останнього разу їздив спонтанно на вихідні?',
+          'Який заклад в Одесі зараз топ для вечірніх посиденьок?'
+        ],
+        replies: [
+          'Привіт! Найкраще вдається грати мирного, якому ніхто не вірить до фіналу 😄 Радий знайомству!',
+          'Як твої плани на ці вихідні?'
+        ],
+        portrait: { bgStart: '#89F7FE', bgEnd: '#66A6FF', skin: '#ECC4A8', hair: '#25211E', hairStyle: 'short', shirt: '#1E293B', accessory: 'none' }
+      },
+      {
+        id: 'khrystyna_29',
+        name: 'Христина',
+        age: 29,
+        height: 167,
+        city: 'Івано-Франківськ',
+        distance: '2 км від вас',
+        job: 'Власниця сімейної пекарні',
+        goal: 'Сім\'я та шлюб',
+        firstDatePayment: 'Платить чоловік',
+        childrenHave: 'Немає дітей',
+        childrenWant: 'Хочу дітей',
+        maritalStatus: 'Не був(ла) у шлюбі',
+        education: 'Вища освіта',
+        religion: 'Католицизм',
+        alcohol: 'Не вживаю',
+        smoking: 'Не курю',
+        sport: 'Час від часу',
+        pets: 'Є собака/собаки',
+        languages: ['Українська', 'Польська', 'Іспанська'],
+        bio: 'Випікаю ремісничий хліб на заквасці, обожнюю недільні обіди в колі близьких і мрію про власний будинок із садом біля гір.',
+        values: 'Сімейні традиції, щирість, працьовитість',
+        bookOrHabit: 'Щоранку о 6:30 п’ю каву з теплим круасаном власної випічки',
+        interests: ['Кулінарія', 'Походи в Карпати', 'Волонтерство', 'Подорожі Україною'],
+        willMatch: true,
+        icebreakers: [
+          'Яка випічка у твоїй пекарні розлітається за першу годину?',
+          'Скільки років твоїй заквасці для ремісничого хліба?',
+          'Які дерева першими посадиш у своєму саду біля гір?'
+        ],
+        replies: [
+          'Привіт! Найшвидше розбирають кардамонові булочки та хліб із в’яленими томатами 🥐 Дуже приємно познайомитися!',
+          'Якщо будеш поруч — заходь на ранкову каву зі свіжою випічкою!'
+        ],
+        portrait: { bgStart: '#FFE29F', bgEnd: '#FFA99F', skin: '#F9D8C2', hair: '#8C4A27', hairStyle: 'long', shirt: '#B56576', accessory: 'none' }
+      }
+    ];
+
+    // ==================== APPLICATION STATE ====================
+
+    const DEFAULT_USER = {
+      name: 'Олександр',
+      age: 28,
+      height: 182,
+      city: 'Київ',
+      job: 'Продуктовий дизайнер',
+      goal: 'Серйозні стосунки',
+      firstDatePayment: 'Платить чоловік',
+      childrenHave: 'Немає дітей',
+      childrenWant: 'Хочу дітей',
+      maritalStatus: 'Не був(ла) у шлюбі',
+      education: 'Вища освіта',
+      religion: 'Християнство',
+      alcohol: 'Зрідка / у компанії',
+      smoking: 'Не курю',
+      sport: 'Регулярно тренуюсь',
+      pets: 'Люблю тварин',
+      languages: ['Українська', 'Англійська'],
+      bio: 'Люблю ранкову фільтр-каву, довгі піші маршрути містом, українську літературу та щирі розмови без зайвого пафосу.',
+      interests: ['Кав’ярні третьої хвилі', 'Походи в Карпати', 'Кіно та артхаус', 'Велопрогулянки'],
+      discoverable: true,
+      portrait: { bgStart: '#F6D365', bgEnd: '#E55A3C', skin: '#ECC4A8', hair: '#2B211B', hairStyle: 'short', shirt: '#1D1B18', accessory: 'glasses' }
+    };
+
+    const DEFAULT_FILTERS = {
+      minAge: 20,
+      maxAge: 40,
+      minHeight: 150,
+      maxHeight: 210,
+      city: 'Усі міста',
+      goal: 'Усі цілі',
+      firstDatePayment: 'Будь-який',
+      childrenHave: 'Будь-який',
+      childrenWant: 'Будь-який',
+      maritalStatus: 'Будь-який',
+      education: 'Будь-яка',
+      religion: 'Будь-яка',
+      alcohol: 'Будь-яке',
+      smoking: 'Будь-яке',
+      sport: 'Будь-яка',
+      pets: 'Будь-які',
+      language: 'Будь-яка'
+    };
+
+    let state = {
+      activeTab: 'discover',
+      user: { ...DEFAULT_USER },
+      swipedIds: [],
+      swipeHistory: [], // { id, action }
+      matches: [], // array of candidate IDs
+      chats: {}, // { [candidateId]: [ { sender: 'me'|'them', text, time } ] }
+      unreadIds: [],
+      activeChatId: null,
+      lastMatchedCandidate: null,
+      cardExpanded: false,
+      filters: { ...DEFAULT_FILTERS }
+    };
+
+    // Load from localStorage if available
+    function loadState() {
+      try {
+        const saved = localStorage.getItem('iskra_mvp_state_v2');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          state = {
+            ...state,
+            ...parsed,
+            user: { ...DEFAULT_USER, ...(parsed.user || {}) },
+            filters: { ...DEFAULT_FILTERS, ...(parsed.filters || {}) }
+          };
+        } else {
+          // Seed 1 initial match & welcome message so the Matches tab feels alive right away
+          state.matches = ['solomia_25'];
+          state.unreadIds = ['solomia_25'];
+          state.chats['solomia_25'] = [
+            {
+              sender: 'them',
+              text: 'Привіт! У нас взаємна симпатія ✨ Бачу, ти теж любиш хорошу каву та змістовні розмови. Як проходить твій день?',
+              time: '19:42'
+            }
+          ];
+          saveState();
+        }
+      } catch (e) {
+        console.warn('Could not read localStorage:', e);
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem('iskra_mvp_state_v2', JSON.stringify(state));
+      } catch (e) {
+        console.warn('Could not save localStorage:', e);
+      }
+    }
+
+    function resetDemoData() {
+      localStorage.removeItem('iskra_mvp_state_v2');
+      location.reload();
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toastBanner');
+      toast.textContent = msg;
+      toast.classList.remove('hidden');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 2400);
+    }
+
+    // ==================== NAVIGATION ====================
+
+    function switchTab(tabName) {
+      state.activeTab = tabName;
+      ['discover', 'matches', 'profile'].forEach(t => {
+        const section = document.getElementById('tab-' + t);
+        const btn = document.getElementById('nav-' + t);
+        if (t === tabName) {
+          section.classList.remove('hidden');
+          btn.classList.remove('text-ink-500');
+          btn.classList.add('text-coral-500');
+        } else {
+          section.classList.add('hidden');
+          btn.classList.remove('text-coral-500');
+          btn.classList.add('text-ink-500');
+        }
+      });
+
+      const filterBtn = document.getElementById('openFilterBtn');
+      const subtitle = document.getElementById('headerSubtitle');
+
+      if (tabName === 'discover') {
+        filterBtn.classList.remove('hidden');
+        subtitle.textContent = 'Знайомства зі змістом';
+        renderDiscover();
+      } else if (tabName === 'matches') {
+        filterBtn.classList.add('hidden');
+        subtitle.textContent = 'Ваші симпатії та діалоги';
+        renderMatchesView();
+      } else if (tabName === 'profile') {
+        filterBtn.classList.add('hidden');
+        subtitle.textContent = 'Ваша анкета в Іскрі';
+        renderProfileTab();
+      }
+      updateUnreadBadge();
+    }
+
+    function updateUnreadBadge() {
+      const badge = document.getElementById('navUnreadDot');
+      if (state.unreadIds.length > 0) {
+        badge.textContent = state.unreadIds.length;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+
+    // ==================== TAB 1: DISCOVER & SWIPING ====================
+
+    function getFilteredCandidates() {
+      const f = state.filters;
+      return CANDIDATES.filter(c => {
+        if (state.swipedIds.includes(c.id)) return false;
+        if (c.age < f.minAge || c.age > f.maxAge) return false;
+        if (c.height < f.minHeight || c.height > f.maxHeight) return false;
+        if (f.city !== 'Усі міста' && c.city !== f.city) return false;
+        if (f.goal !== 'Усі цілі' && c.goal !== f.goal) return false;
+        if (f.firstDatePayment !== 'Будь-який' && c.firstDatePayment !== f.firstDatePayment) return false;
+        if (f.childrenHave !== 'Будь-який' && c.childrenHave !== f.childrenHave) return false;
+        if (f.childrenWant !== 'Будь-який' && c.childrenWant !== f.childrenWant) return false;
+        if (f.maritalStatus !== 'Будь-який' && c.maritalStatus !== f.maritalStatus) return false;
+        if (f.education !== 'Будь-яка' && c.education !== f.education) return false;
+        if (f.religion !== 'Будь-яка' && c.religion !== f.religion) return false;
+        if (f.alcohol !== 'Будь-яке' && c.alcohol !== f.alcohol) return false;
+        if (f.smoking !== 'Будь-яке' && c.smoking !== f.smoking) return false;
+        if (f.sport !== 'Будь-яка' && c.sport !== f.sport) return false;
+        if (f.pets !== 'Будь-які' && c.pets !== f.pets) return false;
+        if (f.language !== 'Будь-яка' && !(c.languages || []).includes(f.language)) return false;
+        return true;
+      });
+    }
+
+    function renderDiscover() {
+      const container = document.getElementById('cardContainer');
+      const controls = document.getElementById('discoverControls');
+      const rewindBtn = document.getElementById('btnRewind');
+      rewindBtn.disabled = state.swipeHistory.length === 0;
+
+      const list = getFilteredCandidates();
+
+      if (list.length === 0) {
+        controls.classList.add('opacity-40', 'pointer-events-none');
+        rewindBtn.disabled = state.swipeHistory.length === 0;
+        if (state.swipeHistory.length > 0) {
+          controls.classList.remove('opacity-40', 'pointer-events-none');
+          document.getElementById('btnPass').disabled = true;
+          document.getElementById('btnSuper').disabled = true;
+          document.getElementById('btnLike').disabled = true;
+        }
+
+        container.innerHTML = `
+          <div class="flex-1 bg-white rounded-3xl border border-cream-200 p-7 flex flex-col items-center justify-center text-center shadow-sm animate-card-in">
+            <div class="w-16 h-16 rounded-3xl bg-coral-50 text-coral-500 flex items-center justify-center mb-4">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <h3 class="font-serif text-xl font-bold text-ink-900">Наразі анкети закінчилися</h3>
+            <p class="text-xs text-ink-500 mt-2 max-w-[260px] leading-relaxed">
+              Ви переглянули всі анкети за обраними параметрами. Спробуйте розширити фільтри або повернути попередню картку.
+            </p>
+            <div class="flex flex-col w-full gap-2.5 mt-6">
+              <button onclick="openFilters()" class="w-full py-3 rounded-2xl bg-coral-500 text-white text-xs font-bold shadow-sm hover:bg-coral-600 transition">Змінити фільтри</button>
+              <button onclick="resetSwipesOnly()" class="w-full py-3 rounded-2xl bg-cream-100 text-ink-700 text-xs font-semibold hover:bg-cream-200 transition">Переглянути анкети знову</button>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      controls.classList.remove('opacity-40', 'pointer-events-none');
+      document.getElementById('btnPass').disabled = false;
+      document.getElementById('btnSuper').disabled = false;
+      document.getElementById('btnLike').disabled = false;
+
+      const person = list[0];
+      const sharedInterests = person.interests.filter(i => state.user.interests.includes(i));
+      const compatibilityScore = Math.min(98, 74 + sharedInterests.length * 7);
+
+      container.innerHTML = `
+        <div id="activeProfileCard" class="flex-1 bg-white rounded-[28px] border border-cream-200 shadow-md overflow-hidden flex flex-col relative animate-card-in select-none">
+          <!-- Visual Portrait Area -->
+          <div class="relative ${state.cardExpanded ? 'h-44' : 'h-[53%]'} transition-all duration-300 shrink-0 overflow-hidden">
+            ${createPortraitSVG(person.portrait)}
+
+            <!-- Top Pills -->
+            <div class="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between">
+              <span class="px-3 py-1 rounded-full bg-ink-900/65 backdrop-blur-md text-white text-[11px] font-semibold flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                ${person.city} • ${person.distance}
+              </span>
+              <span class="px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md text-coral-600 text-[11px] font-bold shadow-xs">
+                ${compatibilityScore}% сумісність
+              </span>
+            </div>
+
+            <!-- Gradient Bottom Overlay on Portrait -->
+            <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink-900/85 via-ink-900/40 to-transparent p-4 pt-12 text-white">
+              <div class="flex items-end justify-between gap-2">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <h2 class="text-2xl font-extrabold tracking-tight">${person.name}, ${person.age}</h2>
+                    <svg class="w-5 h-5 text-sky-400 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                  </div>
+                  <p class="text-xs text-cream-100/90 font-medium mt-0.5">${person.job} • ${person.height} см</p>
+                </div>
+
+                <button onclick="toggleCardExpand()" class="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md flex items-center justify-center text-white transition" title="Детальніше про анкету">
+                  <svg class="w-5 h-5 transition-transform ${state.cardExpanded ? 'rotate-180' : ''}" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card Content Area -->
+          <div class="flex-1 p-4 overflow-y-auto space-y-3 bg-white">
+            <!-- Key Highlight Pills -->
+            <div class="flex flex-wrap items-center gap-1.5">
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-coral-50 text-coral-600 text-[11px] font-semibold">
+                🎯 ${person.goal}
+              </span>
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-amber-50 border border-amber-200/70 text-amber-900 text-[11px] font-semibold">
+                ☕ ${person.firstDatePayment}
+              </span>
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-cream-100 text-ink-700 text-[11px] font-semibold">
+                📏 ${person.height} см
+              </span>
+            </div>
+
+            <!-- Bio -->
+            <p class="text-[13px] text-ink-700 leading-relaxed">${person.bio}</p>
+
+            <!-- Interests -->
+            <div class="flex flex-wrap gap-1.5">
+              ${person.interests.map(tag => {
+                const isShared = state.user.interests.includes(tag);
+                return `<span class="px-2.5 py-1 rounded-xl text-[11px] font-medium ${isShared ? 'bg-coral-500 text-white font-semibold' : 'bg-cream-100 text-ink-700'}">${isShared ? '✦ ' : ''}${tag}</span>`;
+              }).join('')}
+            </div>
+
+            <!-- Extended Details (shown when expanded) -->
+            ${state.cardExpanded ? `
+              <div class="pt-3 border-t border-cream-200 space-y-3 animate-card-in">
+                <div>
+                  <p class="text-[11px] font-bold uppercase tracking-wider text-ink-500 mb-2">Деталі анкети</p>
+                  <div class="flex flex-wrap gap-1.5">
+                    <span class="px-2.5 py-1 rounded-xl bg-cream-50 border border-cream-200 text-ink-800 text-[11px] font-medium">📏 Зріст: ${person.height} см</span>
+                    <span class="px-2.5 py-1 rounded-xl bg-cream-50 border border-cream-200 text-ink-800 text-[11px] font-medium">💍 ${person.maritalStatus}</span>
+                    <span class="px-2.5 py-1 rounded-xl bg-cream-50 border border-cream-200 text-ink-800 text-[11px] font-medium">👶 ${person.childrenHave}</span>
+                    <span class="px-2.5 py-1 rounded-xl bg-cream-50 border border-cream-200 text-ink-800 text-[11px] font-medium">🍼 ${person.childrenWant}</span>
+                    <span class="px-2.5 py-1 rounded-xl bg-cream-50 border border-cream-200 text-ink-800 text-[11px] font-medium">🎓 ${person.education}</span>
+                    <span class="px-2.5 py-1 rounded-xl bg-cream-50 border border-cream-200 text-ink-800 text-[11px] font-medium">🕊️ ${person.religion}</span>
+                    <span class="px-2.5 py-1 rounded-xl bg-cream-50 border border-cream-200 text-ink-800 text-[11px] font-medium">🍷 Алкоголь: ${person.alcohol}</span>
+                    <span class="px-2.5 py-1 rounded-xl bg-cream-50 border border-cream-200 text-ink-800 text-[11px] font-medium">🚭 ${person.smoking}</span>
+                    <span class="px-2.5 py-1 rounded-xl bg-cream-50 border border-cream-200 text-ink-800 text-[11px] font-medium">🏃 Спорт: ${person.sport}</span>
+                    <span class="px-2.5 py-1 rounded-xl bg-cream-50 border border-cream-200 text-ink-800 text-[11px] font-medium">🐾 ${person.pets}</span>
+                    <span class="px-2.5 py-1 rounded-xl bg-cream-50 border border-cream-200 text-ink-800 text-[11px] font-medium">🗣️ ${(person.languages || []).join(', ')}</span>
+                  </div>
+                </div>
+                <div class="bg-cream-50 p-3 rounded-2xl">
+                  <p class="text-[11px] font-bold uppercase tracking-wider text-ink-500">Головні цінності</p>
+                  <p class="text-xs text-ink-900 font-medium mt-0.5">${person.values}</p>
+                </div>
+                <div class="bg-cream-50 p-3 rounded-2xl">
+                  <p class="text-[11px] font-bold uppercase tracking-wider text-ink-500">Захоплення та звички</p>
+                  <p class="text-xs text-ink-900 font-medium mt-0.5">${person.bookOrHabit}</p>
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      `;
+
+      attachTouchSwipeHandlers();
+    }
+
+    function toggleCardExpand() {
+      state.cardExpanded = !state.cardExpanded;
+      renderDiscover();
+    }
+
+    function resetSwipesOnly() {
+      state.swipedIds = [];
+      state.swipeHistory = [];
+      state.cardExpanded = false;
+      saveState();
+      renderDiscover();
+    }
+
+    function handleSwipe(action) {
+      const list = getFilteredCandidates();
+      if (list.length === 0) return;
+
+      const person = list[0];
+      const cardEl = document.getElementById('activeProfileCard');
+
+      if (cardEl) {
+        if (action === 'pass') cardEl.classList.add('swipe-left');
+        if (action === 'like') cardEl.classList.add('swipe-right');
+        if (action === 'super') cardEl.classList.add('swipe-super');
+      }
+
+      setTimeout(() => {
+        state.swipedIds.push(person.id);
+        state.swipeHistory.push({ id: person.id, action });
+        state.cardExpanded = false;
+
+        if ((action === 'like' || action === 'super') && person.willMatch) {
+          if (!state.matches.includes(person.id)) {
+            state.matches.unshift(person.id);
+          }
+          if (!state.chats[person.id]) {
+            state.chats[person.id] = [];
+          }
+          saveState();
+          renderDiscover();
+          openMatchOverlay(person, action === 'super');
+        } else {
+          if (action === 'super') showToast(`Особливу симпатію надіслано для ${person.name}`);
+          saveState();
+          renderDiscover();
+        }
+      }, 270);
+    }
+
+    function rewindLast() {
+      if (state.swipeHistory.length === 0) return;
+      const last = state.swipeHistory.pop();
+      state.swipedIds = state.swipedIds.filter(id => id !== last.id);
+      state.cardExpanded = false;
+      saveState();
+      showToast('Попередню анкету повернуто');
+      renderDiscover();
+    }
+
+    // Touch drag gesture support on the active card
+    function attachTouchSwipeHandlers() {
+      const card = document.getElementById('activeProfileCard');
+      if (!card) return;
+
+      let startX = 0;
+      let currentX = 0;
+      let isDragging = false;
+
+      card.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+        isDragging = true;
+        card.style.transition = 'none';
+      }, { passive: true });
+
+      card.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        currentX = e.touches[0].clientX - startX;
+        const rotate = currentX * 0.05;
+        card.style.transform = `translateX(${currentX}px) rotate(${rotate}deg)`;
+      }, { passive: true });
+
+      card.addEventListener('touchend', () => {
+        if (!isDragging) return;
+        isDragging = false;
+        card.style.transition = 'transform 0.25s ease';
+        if (currentX > 95) {
+          handleSwipe('like');
+        } else if (currentX < -95) {
+          handleSwipe('pass');
+        } else {
+          card.style.transform = 'translateX(0) rotate(0deg)';
+        }
+        currentX = 0;
+      });
+    }
+
+    // ==================== FILTERS MODAL ====================
+
+    function getActiveFilterCount() {
+      const f = state.filters;
+      let count = 0;
+      if (f.minAge !== DEFAULT_FILTERS.minAge || f.maxAge !== DEFAULT_FILTERS.maxAge) count++;
+      if (f.minHeight !== DEFAULT_FILTERS.minHeight || f.maxHeight !== DEFAULT_FILTERS.maxHeight) count++;
+      if (f.city !== DEFAULT_FILTERS.city) count++;
+      if (f.goal !== DEFAULT_FILTERS.goal) count++;
+      if (f.firstDatePayment !== DEFAULT_FILTERS.firstDatePayment) count++;
+      if (f.childrenHave !== DEFAULT_FILTERS.childrenHave) count++;
+      if (f.childrenWant !== DEFAULT_FILTERS.childrenWant) count++;
+      if (f.maritalStatus !== DEFAULT_FILTERS.maritalStatus) count++;
+      if (f.education !== DEFAULT_FILTERS.education) count++;
+      if (f.religion !== DEFAULT_FILTERS.religion) count++;
+      if (f.alcohol !== DEFAULT_FILTERS.alcohol) count++;
+      if (f.smoking !== DEFAULT_FILTERS.smoking) count++;
+      if (f.sport !== DEFAULT_FILTERS.sport) count++;
+      if (f.pets !== DEFAULT_FILTERS.pets) count++;
+      if (f.language !== DEFAULT_FILTERS.language) count++;
+      return count;
+    }
+
+    function updateFilterBadgeUI() {
+      const count = getActiveFilterCount();
+      const headerBadge = document.getElementById('activeFilterCount');
+      const drawerBadge = document.getElementById('drawerFilterCounter');
+
+      if (headerBadge) {
+        headerBadge.textContent = count;
+        headerBadge.classList.toggle('hidden', count === 0);
+      }
+      if (drawerBadge) {
+        drawerBadge.textContent = count === 0 ? 'Без обмежень' : `${count} активних`;
+      }
+    }
+
+    function renderFilterPillGroup(containerId, options, filterKey) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      const currentVal = state.filters[filterKey];
+      container.innerHTML = options.map(opt => {
+        const active = currentVal === opt;
+        const safeOpt = opt.replace(/'/g, "\\'");
+        return `<button type="button" onclick="setSingleFilter('${filterKey}', '${safeOpt}')" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition ${active ? 'bg-ink-900 text-white shadow-2xs' : 'bg-white border border-cream-200 text-ink-700 hover:bg-cream-100'}">${opt}</button>`;
+      }).join('');
+    }
+
+    function setSingleFilter(key, value) {
+      state.filters[key] = value;
+      openFilters();
+    }
+
+    function applyHeightPreset(minH, maxH) {
+      document.getElementById('filterMinHeight').value = minH;
+      document.getElementById('filterMaxHeight').value = maxH;
+      state.filters.minHeight = minH;
+      state.filters.maxHeight = maxH;
+      updateFilterLabels();
+      updateFilterBadgeUI();
+    }
+
+    function openFilters() {
+      const modal = document.getElementById('filterModal');
+      document.getElementById('filterMinAge').value = state.filters.minAge;
+      document.getElementById('filterMaxAge').value = state.filters.maxAge;
+      document.getElementById('filterMinHeight').value = state.filters.minHeight;
+      document.getElementById('filterMaxHeight').value = state.filters.maxHeight;
+      updateFilterLabels();
+
+      renderFilterPillGroup('filterCityPills', FILTER_OPTIONS.cities, 'city');
+      renderFilterPillGroup('filterGoalPills', FILTER_OPTIONS.goals, 'goal');
+      renderFilterPillGroup('filterPaymentPills', FILTER_OPTIONS.payment, 'firstDatePayment');
+      renderFilterPillGroup('filterChildrenHavePills', FILTER_OPTIONS.childrenHave, 'childrenHave');
+      renderFilterPillGroup('filterChildrenWantPills', FILTER_OPTIONS.childrenWant, 'childrenWant');
+      renderFilterPillGroup('filterMaritalPills', FILTER_OPTIONS.marital, 'maritalStatus');
+      renderFilterPillGroup('filterEducationPills', FILTER_OPTIONS.education, 'education');
+      renderFilterPillGroup('filterReligionPills', FILTER_OPTIONS.religion, 'religion');
+      renderFilterPillGroup('filterAlcoholPills', FILTER_OPTIONS.alcohol, 'alcohol');
+      renderFilterPillGroup('filterSmokingPills', FILTER_OPTIONS.smoking, 'smoking');
+      renderFilterPillGroup('filterSportPills', FILTER_OPTIONS.sport, 'sport');
+      renderFilterPillGroup('filterPetsPills', FILTER_OPTIONS.pets, 'pets');
+      renderFilterPillGroup('filterLanguagePills', FILTER_OPTIONS.languages, 'language');
+
+      updateFilterBadgeUI();
+      modal.classList.remove('hidden');
+    }
+
+    function closeFilters() {
+      document.getElementById('filterModal').classList.add('hidden');
+    }
+
+    function updateFilterLabels() {
+      let minAge = parseInt(document.getElementById('filterMinAge').value, 10);
+      let maxAge = parseInt(document.getElementById('filterMaxAge').value, 10);
+      if (minAge > maxAge) [minAge, maxAge] = [maxAge, minAge];
+
+      document.getElementById('minAgeVal').textContent = minAge;
+      document.getElementById('maxAgeVal').textContent = maxAge;
+      document.getElementById('filterAgeLabel').textContent = `${minAge} – ${maxAge} років`;
+
+      let minH = parseInt(document.getElementById('filterMinHeight').value, 10);
+      let maxH = parseInt(document.getElementById('filterMaxHeight').value, 10);
+      if (minH > maxH) [minH, maxH] = [maxH, minH];
+
+      document.getElementById('minHeightVal').textContent = minH;
+      document.getElementById('maxHeightVal').textContent = maxH;
+      document.getElementById('filterHeightLabel').textContent =
+        (minH === 150 && maxH === 210) ? 'Будь-який (150–210 см)' : `${minH} – ${maxH} см`;
+    }
+
+    function applyFilters() {
+      let minAge = parseInt(document.getElementById('filterMinAge').value, 10);
+      let maxAge = parseInt(document.getElementById('filterMaxAge').value, 10);
+      if (minAge > maxAge) [minAge, maxAge] = [maxAge, minAge];
+
+      let minH = parseInt(document.getElementById('filterMinHeight').value, 10);
+      let maxH = parseInt(document.getElementById('filterMaxHeight').value, 10);
+      if (minH > maxH) [minH, maxH] = [maxH, minH];
+
+      state.filters.minAge = minAge;
+      state.filters.maxAge = maxAge;
+      state.filters.minHeight = minH;
+      state.filters.maxHeight = maxH;
+
+      updateFilterBadgeUI();
+      saveState();
+      closeFilters();
+      renderDiscover();
+      const matchedCount = getFilteredCandidates().length;
+      showToast(`Знайдено анкет: ${matchedCount}`);
+    }
+
+    function resetFilters() {
+      state.filters = { ...DEFAULT_FILTERS };
+      updateFilterBadgeUI();
+      saveState();
+      openFilters();
+      renderDiscover();
+      showToast('Усі фільтри скинуто');
+    }
+
+    function closeFilters() {
+      document.getElementById('filterModal').classList.add('hidden');
+    }
+
+    function updateFilterLabels() {
+      let min = parseInt(document.getElementById('filterMinAge').value, 10);
+      let max = parseInt(document.getElementById('filterMaxAge').value, 10);
+      if (min > max) {
+        [min, max] = [max, min];
+      }
+      document.getElementById('minAgeVal').textContent = min;
+      document.getElementById('maxAgeVal').textContent = max;
+      document.getElementById('filterAgeLabel').textContent = `${min} – ${max} років`;
+    }
+
+    function selectFilterCity(city) {
+      state.filters.city = city;
+      openFilters();
+    }
+
+    function selectFilterGoal(goal) {
+      state.filters.goal = goal;
+      openFilters();
+    }
+
+    function selectFilterPayment(option) {
+      state.filters.firstDatePayment = option;
+      openFilters();
+    }
+
+    function applyFilters() {
+      let min = parseInt(document.getElementById('filterMinAge').value, 10);
+      let max = parseInt(document.getElementById('filterMaxAge').value, 10);
+      if (min > max) [min, max] = [max, min];
+      state.filters.minAge = min;
+      state.filters.maxAge = max;
+
+      const isFiltered =
+        state.filters.city !== 'Усі міста' ||
+        state.filters.goal !== 'Усі цілі' ||
+        (state.filters.firstDatePayment && state.filters.firstDatePayment !== 'Будь-який варіант') ||
+        min !== 20 ||
+        max !== 38;
+      document.getElementById('activeFilterBadge').classList.toggle('hidden', !isFiltered);
+
+      saveState();
+      closeFilters();
+      renderDiscover();
+      showToast('Фільтри оновлено');
+    }
+
+    function resetFilters() {
+      state.filters = {
+        minAge: 20,
+        maxAge: 38,
+        city: 'Усі міста',
+        goal: 'Усі цілі',
+        firstDatePayment: 'Будь-який варіант'
+      };
+      document.getElementById('activeFilterBadge').classList.add('hidden');
+      saveState();
+      openFilters();
+      renderDiscover();
+    }
+
+    // ==================== IT'S A MATCH OVERLAY ====================
+
+    function openMatchOverlay(person, isSuper) {
+      state.lastMatchedCandidate = person;
+      const overlay = document.getElementById('matchOverlay');
+      document.getElementById('matchSubtitle').textContent = isSuper
+        ? `Ваша особлива симпатія підкорила ${person.name}! Почніть розмову першими.`
+        : `Ви та ${person.name} вподобали одне одного. Напишіть перше повідомлення!`;
+
+      document.getElementById('matchMyAvatar').innerHTML = createPortraitSVG(state.user.portrait);
+      document.getElementById('matchPartnerAvatar').innerHTML = createPortraitSVG(person.portrait);
+      document.getElementById('matchIcebreakerInput').value = '';
+
+      document.getElementById('matchQuickChips').innerHTML = person.icebreakers.slice(0, 2).map(q => `
+        <button type="button" onclick="fillMatchIcebreaker('${q.replace(/'/g, "\\'")}')" class="text-[11px] bg-white/15 hover:bg-white/25 text-white px-3 py-1.5 rounded-full text-left transition">
+          «${q}»
+        </button>
+      `).join('');
+
+      overlay.classList.remove('hidden');
+    }
+
+    function fillMatchIcebreaker(text) {
+      document.getElementById('matchIcebreakerInput').value = text;
+      document.getElementById('matchIcebreakerInput').focus();
+    }
+
+    function closeMatchOverlay() {
+      document.getElementById('matchOverlay').classList.add('hidden');
+    }
+
+    function sendMatchIcebreaker(e) {
+      e.preventDefault();
+      const input = document.getElementById('matchIcebreakerInput');
+      const text = input.value.trim();
+      if (!text || !state.lastMatchedCandidate) return;
+
+      const partner = state.lastMatchedCandidate;
+      closeMatchOverlay();
+      switchTab('matches');
+      openChat(partner.id);
+      appendAndReplyMessage(partner.id, text);
+    }
+
+    // ==================== TAB 2: MATCHES & CHAT ====================
+
+    function getCurrentTimeStr() {
+      const now = new Date();
+      return now.toTimeString().slice(0, 5);
+    }
+
+    function renderMatchesView() {
+      document.getElementById('matchesListView').classList.remove('hidden');
+      document.getElementById('chatThreadView').classList.add('hidden');
+      state.activeChatId = null;
+
+      const matchedProfiles = state.matches
+        .map(id => CANDIDATES.find(c => c.id === id))
+        .filter(Boolean);
+
+      document.getElementById('matchesCountBadge').textContent = matchedProfiles.length;
+
+      const strip = document.getElementById('newMatchesStrip');
+      const convList = document.getElementById('conversationsList');
+
+      if (matchedProfiles.length === 0) {
+        strip.innerHTML = `<p class="text-xs text-ink-500 py-2">Поки що немає взаємних симпатій. Ставте лайки у вкладці «Знайомства»!</p>`;
+        convList.innerHTML = `
+          <div class="bg-white rounded-3xl p-6 border border-cream-200 text-center">
+            <p class="text-sm font-semibold text-ink-900">Тут з’являться ваші чати</p>
+            <p class="text-xs text-ink-500 mt-1">Коли симпатія буде взаємною, ви зможете розпочати діалог.</p>
+            <button onclick="switchTab('discover')" class="mt-4 px-4 py-2 rounded-xl bg-coral-500 text-white text-xs font-bold">Перейти до анкет</button>
+          </div>
+        `;
+        return;
+      }
+
+      // Render top horizontal strip
+      strip.innerHTML = matchedProfiles.map(p => {
+        const isUnread = state.unreadIds.includes(p.id);
+        return `
+          <button onclick="openChat('${p.id}')" class="flex flex-col items-center gap-1.5 shrink-0 group">
+            <div class="relative w-16 h-16 rounded-2xl p-0.5 ${isUnread ? 'bg-gradient-to-tr from-coral-500 to-amber-400' : 'bg-cream-200'}">
+              <div class="w-full h-full rounded-[14px] overflow-hidden bg-white">
+                ${createPortraitSVG(p.portrait)}
+              </div>
+              ${isUnread ? '<span class="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-coral-500 border-2 border-cream-50"></span>' : ''}
+            </div>
+            <span class="text-xs font-semibold text-ink-900 group-hover:text-coral-600 transition">${p.name}</span>
+          </button>
+        `;
+      }).join('');
+
+      // Render conversations list
+      convList.innerHTML = matchedProfiles.map(p => {
+        const msgs = state.chats[p.id] || [];
+        const lastMsg = msgs[msgs.length - 1];
+        const isUnread = state.unreadIds.includes(p.id);
+
+        return `
+          <button onclick="openChat('${p.id}')" class="w-full bg-white hover:bg-cream-100/70 border ${isUnread ? 'border-coral-400/50' : 'border-cream-200'} rounded-2xl p-3.5 flex items-center gap-3.5 text-left transition shadow-2xs">
+            <div class="w-13 h-13 w-[52px] h-[52px] rounded-2xl overflow-hidden shrink-0">
+              ${createPortraitSVG(p.portrait)}
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between">
+                <h4 class="font-bold text-sm text-ink-900">${p.name}, ${p.age}</h4>
+                <span class="text-[11px] text-ink-500">${lastMsg ? lastMsg.time : 'Нова іскра'}</span>
+              </div>
+              <p class="text-xs ${isUnread ? 'font-semibold text-ink-900' : 'text-ink-500'} truncate mt-0.5">
+                ${lastMsg ? (lastMsg.sender === 'me' ? 'Ви: ' + lastMsg.text : lastMsg.text) : 'Натисніть, щоб написати перше повідомлення ✨'}
+              </p>
+            </div>
+            ${isUnread ? '<span class="w-2.5 h-2.5 rounded-full bg-coral-500 shrink-0"></span>' : ''}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function openChat(partnerId) {
+      const partner = CANDIDATES.find(c => c.id === partnerId);
+      if (!partner) return;
+
+      state.activeChatId = partnerId;
+      state.unreadIds = state.unreadIds.filter(id => id !== partnerId);
+      saveState();
+      updateUnreadBadge();
+
+      document.getElementById('matchesListView').classList.add('hidden');
+      document.getElementById('chatThreadView').classList.remove('hidden');
+
+      document.getElementById('chatPartnerAvatar').innerHTML = createPortraitSVG(partner.portrait);
+      document.getElementById('chatPartnerName').textContent = `${partner.name}, ${partner.age}`;
+      document.getElementById('chatPartnerMeta').textContent = `${partner.city} • ${partner.goal}`;
+
+      // Icebreaker chips
+      document.getElementById('icebreakerSuggestions').innerHTML = partner.icebreakers.map(prompt => `
+        <button type="button" onclick="useChatSuggestion('${prompt.replace(/'/g, "\\'")}')" class="shrink-0 text-[11px] font-medium bg-white hover:bg-coral-50 text-ink-700 hover:text-coral-600 border border-cream-200 px-3 py-1.5 rounded-full transition">
+          💡 ${prompt}
+        </button>
+      `).join('');
+
+      renderChatMessages();
+    }
+
+    function closeChat() {
+      state.activeChatId = null;
+      renderMatchesView();
+    }
+
+    function useChatSuggestion(text) {
+      const input = document.getElementById('chatInput');
+      input.value = text;
+      input.focus();
+    }
+
+    function renderChatMessages(showTyping = false) {
+      const partnerId = state.activeChatId;
+      if (!partnerId) return;
+
+      const partner = CANDIDATES.find(c => c.id === partnerId);
+      const msgs = state.chats[partnerId] || [];
+      const container = document.getElementById('chatMessagesContainer');
+
+      let html = `
+        <div class="text-center py-2">
+          <span class="inline-block text-[11px] text-ink-500 bg-cream-200/60 px-3 py-1 rounded-full">
+            Ви утворили пару з ${partner.name}
+          </span>
+        </div>
+      `;
+
+      html += msgs.map(m => {
+        if (m.sender === 'me') {
+          return `
+            <div class="flex justify-end">
+              <div class="max-w-[78%] bg-coral-500 text-white px-4 py-2.5 rounded-2xl rounded-br-sm shadow-xs">
+                <p class="text-xs sm:text-[13px] leading-relaxed">${escapeHtml(m.text)}</p>
+                <span class="block text-[10px] text-white/75 text-right mt-1">${m.time}</span>
+              </div>
+            </div>
+          `;
+        } else {
+          return `
+            <div class="flex items-end gap-2">
+              <div class="w-7 h-7 rounded-full overflow-hidden shrink-0 mb-1">
+                ${createPortraitSVG(partner.portrait)}
+              </div>
+              <div class="max-w-[78%] bg-white border border-cream-200 text-ink-900 px-4 py-2.5 rounded-2xl rounded-bl-sm shadow-2xs">
+                <p class="text-xs sm:text-[13px] leading-relaxed">${escapeHtml(m.text)}</p>
+                <span class="block text-[10px] text-ink-500 mt-1">${m.time}</span>
+              </div>
+            </div>
+          `;
+        }
+      }).join('');
+
+      if (showTyping) {
+        html += `
+          <div class="flex items-end gap-2">
+            <div class="w-7 h-7 rounded-full overflow-hidden shrink-0">
+              ${createPortraitSVG(partner.portrait)}
+            </div>
+            <div class="bg-white border border-cream-200 px-4 py-3 rounded-2xl rounded-bl-sm flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-ink-500 typing-dot"></span>
+              <span class="w-1.5 h-1.5 rounded-full bg-ink-500 typing-dot"></span>
+              <span class="w-1.5 h-1.5 rounded-full bg-ink-500 typing-dot"></span>
+            </div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = html;
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function sendChatMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text || !state.activeChatId) return;
+
+      input.value = '';
+      appendAndReplyMessage(state.activeChatId, text);
+    }
+
+    function appendAndReplyMessage(partnerId, text) {
+      if (!state.chats[partnerId]) state.chats[partnerId] = [];
+      state.chats[partnerId].push({
+        sender: 'me',
+        text,
+        time: getCurrentTimeStr()
+      });
+      saveState();
+
+      if (state.activeChatId === partnerId) {
+        renderChatMessages(true);
+      }
+
+      const partner = CANDIDATES.find(c => c.id === partnerId);
+      setTimeout(() => {
+        const replyIndex = Math.min(
+          partner.replies.length - 1,
+          Math.floor((state.chats[partnerId].length - 1) / 2)
+        );
+        const replyText = partner.replies[replyIndex] || 'Звучить чудово! Розкажи трохи більше про себе 😊';
+
+        state.chats[partnerId].push({
+          sender: 'them',
+          text: replyText,
+          time: getCurrentTimeStr()
+        });
+
+        if (state.activeChatId !== partnerId) {
+          if (!state.unreadIds.includes(partnerId)) state.unreadIds.push(partnerId);
+          updateUnreadBadge();
+          showToast(`Нове повідомлення від ${partner.name}`);
+        } else {
+          renderChatMessages(false);
+        }
+        saveState();
+      }, 1350);
+    }
+
+    function openPartnerInfoModal() {
+      const partner = CANDIDATES.find(c => c.id === state.activeChatId);
+      if (!partner) return;
+      openProfileCardModal(partner);
+    }
+
+    // ==================== TAB 3: MY PROFILE ====================
+
+    function renderProfileTab() {
+      const u = state.user;
+      document.getElementById('myProfileAvatarPreview').innerHTML = createPortraitSVG(u.portrait);
+      document.getElementById('profileHeaderName').textContent = `${u.name}, ${u.age}`;
+      document.getElementById('profileHeaderSub').textContent = `${u.city} • ${u.job} • ${u.height || 182} см`;
+
+      document.getElementById('inputMyName').value = u.name;
+      document.getElementById('inputMyAge').value = u.age;
+      document.getElementById('inputMyCity').value = u.city;
+      document.getElementById('inputMyHeight').value = u.height || 182;
+      document.getElementById('inputMyJob').value = u.job;
+      document.getElementById('inputMyGoal').value = u.goal;
+      document.getElementById('inputMyChildrenHave').value = u.childrenHave || 'Немає дітей';
+      document.getElementById('inputMyChildrenWant').value = u.childrenWant || 'Хочу дітей';
+      document.getElementById('inputMyMarital').value = u.maritalStatus || 'Не був(ла) у шлюбі';
+      document.getElementById('inputMyEducation').value = u.education || 'Вища освіта';
+      document.getElementById('inputMyReligion').value = u.religion || 'Християнство';
+      document.getElementById('inputMyPets').value = u.pets || 'Люблю тварин';
+      document.getElementById('inputMyAlcohol').value = u.alcohol || 'Зрідка / у компанії';
+      document.getElementById('inputMySmoking').value = u.smoking || 'Не курю';
+      document.getElementById('inputMySport').value = u.sport || 'Регулярно тренуюсь';
+      document.getElementById('inputMyBio').value = u.bio;
+      document.getElementById('toggleDiscovery').checked = u.discoverable;
+
+      renderMyFirstDatePaymentSelector();
+      renderMyLanguagesSelector();
+      renderMyInterestsSelector();
+    }
+
+    function renderMyLanguagesSelector() {
+      const container = document.getElementById('myLanguagesGrid');
+      if (!container) return;
+      const userLangs = state.user.languages || ['Українська'];
+      const langs = FILTER_OPTIONS.languages.filter(l => l !== 'Будь-яка');
+
+      container.innerHTML = langs.map(lang => {
+        const selected = userLangs.includes(lang);
+        return `
+          <button type="button" onclick="toggleUserLanguage('${lang}')" class="px-2.5 py-1.5 rounded-xl text-xs font-medium transition ${selected ? 'bg-ink-900 text-white font-semibold' : 'bg-cream-100 text-ink-700 hover:bg-cream-200'}">
+            ${selected ? '✓ ' : '+ '}${lang}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function toggleUserLanguage(lang) {
+      if (!state.user.languages) state.user.languages = ['Українська'];
+      const idx = state.user.languages.indexOf(lang);
+      if (idx > -1) {
+        if (state.user.languages.length === 1) {
+          showToast('Має бути обрана хоча б одна мова');
+          return;
+        }
+        state.user.languages.splice(idx, 1);
+      } else {
+        state.user.languages.push(lang);
+      }
+      saveState();
+      renderMyLanguagesSelector();
+    }
+
+    function renderMyFirstDatePaymentSelector() {
+      const container = document.getElementById('myFirstDatePaymentPills');
+      if (!container) return;
+      const current = state.user.firstDatePayment || 'Платить чоловік';
+
+      container.innerHTML = FIRST_DATE_PAYMENT_OPTIONS.map(option => {
+        const selected = current === option;
+        return `
+          <button type="button" onclick="selectUserFirstDatePayment('${option}')" class="px-2.5 py-2.5 rounded-xl text-xs font-semibold text-center leading-tight transition ${selected ? 'bg-coral-500 text-white shadow-xs' : 'bg-cream-100 text-ink-700 hover:bg-cream-200'}">
+            ${option}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function selectUserFirstDatePayment(option) {
+      state.user.firstDatePayment = option;
+      saveState();
+      renderMyFirstDatePaymentSelector();
+      showToast(`Перше побачення: ${option}`);
+    }
+
+    function renderMyInterestsSelector() {
+      const grid = document.getElementById('myInterestsGrid');
+      document.getElementById('interestCounter').textContent = `${state.user.interests.length}/6`;
+
+      grid.innerHTML = ALL_INTERESTS.map(tag => {
+        const selected = state.user.interests.includes(tag);
+        return `
+          <button type="button" onclick="toggleUserInterest('${tag.replace(/'/g, "\\'")}')" class="px-3 py-1.5 rounded-xl text-xs font-medium transition ${selected ? 'bg-coral-500 text-white font-semibold shadow-2xs' : 'bg-cream-100 text-ink-700 hover:bg-cream-200'}">
+            ${selected ? '✓ ' : '+ '}${tag}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function toggleUserInterest(tag) {
+      const idx = state.user.interests.indexOf(tag);
+      if (idx > -1) {
+        state.user.interests.splice(idx, 1);
+      } else {
+        if (state.user.interests.length >= 6) {
+          showToast('Можна обрати до 6 інтересів');
+          return;
+        }
+        state.user.interests.push(tag);
+      }
+      saveState();
+      renderMyInterestsSelector();
+    }
+
+    function saveUserProfile() {
+      const name = document.getElementById('inputMyName').value.trim() || 'Олександр';
+      const age = Math.max(18, Math.min(80, parseInt(document.getElementById('inputMyAge').value, 10) || 28));
+      const height = Math.max(140, Math.min(220, parseInt(document.getElementById('inputMyHeight').value, 10) || 182));
+      const city = document.getElementById('inputMyCity').value;
+      const job = document.getElementById('inputMyJob').value.trim() || 'Дизайнер';
+      const goal = document.getElementById('inputMyGoal').value;
+      const childrenHave = document.getElementById('inputMyChildrenHave').value;
+      const childrenWant = document.getElementById('inputMyChildrenWant').value;
+      const maritalStatus = document.getElementById('inputMyMarital').value;
+      const education = document.getElementById('inputMyEducation').value;
+      const religion = document.getElementById('inputMyReligion').value;
+      const pets = document.getElementById('inputMyPets').value;
+      const alcohol = document.getElementById('inputMyAlcohol').value;
+      const smoking = document.getElementById('inputMySmoking').value;
+      const sport = document.getElementById('inputMySport').value;
+      const bio = document.getElementById('inputMyBio').value.trim();
+      const discoverable = document.getElementById('toggleDiscovery').checked;
+
+      state.user = {
+        ...state.user,
+        name, age, height, city, job, goal,
+        childrenHave, childrenWant, maritalStatus,
+        education, religion, pets, alcohol, smoking, sport,
+        bio, discoverable
+      };
+      saveState();
+
+      document.getElementById('profileHeaderName').textContent = `${name}, ${age}`;
+      document.getElementById('profileHeaderSub').textContent = `${city} • ${job} • ${height} см`;
+      showToast('Зміни профілю збережено');
+    }
+
+    function openMyCardPreview() {
+      openProfileCardModal({
+        ...state.user,
+        distance: 'Ваша анкета',
+        values: 'Так вашу картку бачать інші користувачі «Іскри»',
+        bookOrHabit: 'Оновлюйте параметри й інтереси для точніших збігів'
+      });
+    }
+
+    function openProfileCardModal(person) {
+      const modal = document.getElementById('detailModal');
+      const body = document.getElementById('detailModalBody');
+
+      body.innerHTML = `
+        <div class="relative h-60 w-full">
+          ${createPortraitSVG(person.portrait)}
+          <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink-900/85 to-transparent p-5 text-white">
+            <h3 class="text-2xl font-extrabold">${person.name}, ${person.age}</h3>
+            <p class="text-xs text-cream-100">${person.job} • ${person.city} • ${person.height} см</p>
+          </div>
+        </div>
+        <div class="p-5 space-y-4">
+          <div class="flex flex-wrap items-center gap-2">
+            <div class="inline-flex items-center px-3 py-1 rounded-xl bg-coral-50 text-coral-600 text-xs font-semibold">
+              🎯 ${person.goal}
+            </div>
+            ${person.firstDatePayment ? `
+              <div class="inline-flex items-center px-3 py-1 rounded-xl bg-amber-50 border border-amber-200/70 text-amber-900 text-xs font-semibold">
+                ☕ Перше побачення: ${person.firstDatePayment}
+              </div>
+            ` : ''}
+          </div>
+          <p class="text-sm text-ink-700 leading-relaxed">${person.bio}</p>
+          <div>
+            <p class="text-xs font-bold uppercase tracking-wider text-ink-500 mb-2">Параметри профілю</p>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="px-2.5 py-1 rounded-xl bg-cream-100 text-ink-800 text-xs font-medium">📏 ${person.height} см</span>
+              <span class="px-2.5 py-1 rounded-xl bg-cream-100 text-ink-800 text-xs font-medium">💍 ${person.maritalStatus}</span>
+              <span class="px-2.5 py-1 rounded-xl bg-cream-100 text-ink-800 text-xs font-medium">👶 ${person.childrenHave}</span>
+              <span class="px-2.5 py-1 rounded-xl bg-cream-100 text-ink-800 text-xs font-medium">🍼 ${person.childrenWant}</span>
+              <span class="px-2.5 py-1 rounded-xl bg-cream-100 text-ink-800 text-xs font-medium">🎓 ${person.education}</span>
+              <span class="px-2.5 py-1 rounded-xl bg-cream-100 text-ink-800 text-xs font-medium">🕊️ ${person.religion}</span>
+              <span class="px-2.5 py-1 rounded-xl bg-cream-100 text-ink-800 text-xs font-medium">🍷 ${person.alcohol}</span>
+              <span class="px-2.5 py-1 rounded-xl bg-cream-100 text-ink-800 text-xs font-medium">🚭 ${person.smoking}</span>
+              <span class="px-2.5 py-1 rounded-xl bg-cream-100 text-ink-800 text-xs font-medium">🏃 ${person.sport}</span>
+              <span class="px-2.5 py-1 rounded-xl bg-cream-100 text-ink-800 text-xs font-medium">🐾 ${person.pets}</span>
+              <span class="px-2.5 py-1 rounded-xl bg-cream-100 text-ink-800 text-xs font-medium">🗣️ ${(person.languages || []).join(', ')}</span>
+            </div>
+          </div>
+          <div>
+            <p class="text-xs font-bold uppercase tracking-wider text-ink-500 mb-2">Інтереси</p>
+            <div class="flex flex-wrap gap-1.5">
+              ${person.interests.map(i => `<span class="px-2.5 py-1 rounded-xl bg-coral-50 text-coral-700 text-xs font-medium">${i}</span>`).join('')}
+            </div>
+          </div>
+          ${person.values ? `
+            <div class="bg-cream-100/70 p-3.5 rounded-2xl">
+              <p class="text-[11px] font-bold uppercase text-ink-500">Цінності</p>
+              <p class="text-xs text-ink-900 font-medium mt-0.5">${person.values}</p>
+            </div>
+          ` : ''}
+        </div>
+      `;
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeDetailModal() {
+      document.getElementById('detailModal').classList.add('hidden');
+    }
+
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // ==================== INITIALIZE ====================
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      updateFilterBadgeUI();
+      updateUnreadBadge();
+      switchTab('discover');
+    });
+  </script>
+</body>
+</html>
